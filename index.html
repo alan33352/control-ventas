@@ -1,0 +1,6536 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Control de Ventas
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            padding: 20px;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background: #f3f4f6;
+
+            color: #111827;
+
+        }
+
+
+        .contenedor {
+
+            width: 100%;
+
+            max-width: 1500px;
+
+            margin: 0 auto;
+
+        }
+
+
+        /* =================================================
+           TITULO
+        ================================================= */
+
+        .titulo-principal {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .titulo-principal h1 {
+
+            margin: 0 0 8px;
+
+            font-size: 30px;
+
+        }
+
+
+        .titulo-principal p {
+
+            margin: 0;
+
+            color: #6b7280;
+
+        }
+
+
+        /* =================================================
+           BARRA DE CONTROLES
+        ================================================= */
+
+        .barra-controles {
+
+            background: white;
+
+            padding: 18px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .barra-controles label {
+
+            font-weight: bold;
+
+        }
+
+
+        .barra-controles input[type="date"] {
+
+            padding: 10px;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+        }
+
+
+        button {
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 10px 14px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        button:hover {
+
+            opacity: 0.88;
+
+        }
+
+
+        .btn-guardar {
+
+            background: #16a34a;
+
+            color: white;
+
+        }
+
+
+        .btn-vendedor {
+
+            background: #2563eb;
+
+            color: white;
+
+        }
+
+
+        .btn-eliminar-vendedor {
+
+            background: #dc2626;
+
+            color: white;
+
+        }
+
+
+        .btn-producto {
+
+            background: #7c3aed;
+
+            color: white;
+
+        }
+
+
+        .btn-eliminar-producto {
+
+            background: #dc2626;
+
+            color: white;
+
+        }
+
+
+        .btn-borrar {
+
+            background: #111827;
+
+            color: white;
+
+        }
+
+
+        .btn-eliminar {
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+        }
+
+
+        /* =================================================
+           SECCIONES
+        ================================================= */
+
+        .seccion {
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            margin-bottom: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .seccion h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 16px;
+
+            font-size: 22px;
+
+        }
+
+
+        .tabla-contenedor {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 750px;
+
+        }
+
+
+        th,
+        td {
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            padding: 10px;
+
+            text-align: center;
+
+        }
+
+
+        th {
+
+            background: #111827;
+
+            color: white;
+
+        }
+
+
+        td:first-child {
+
+            font-weight: bold;
+
+            background: #f9fafb;
+
+        }
+
+
+        .input-nombre {
+
+            width: 100%;
+
+            border:
+                1px solid
+                transparent;
+
+            background: transparent;
+
+            font-weight: bold;
+
+            font-size: 14px;
+
+            padding: 6px;
+
+        }
+
+
+        .input-nombre:focus {
+
+            outline: none;
+
+            border:
+                1px solid
+                #93c5fd;
+
+            background: white;
+
+            border-radius: 6px;
+
+        }
+
+
+        .cantidad-input {
+
+            width: 85px;
+
+            padding: 8px;
+
+            text-align: center;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 7px;
+
+            font-size: 15px;
+
+        }
+
+
+        /* =================================================
+           COBRO + CALCULADORA
+        ================================================= */
+
+        .paneles-abajo {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(320px, 420px);
+
+            gap: 20px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .panel-cobro,
+        .panel-calculadora {
+
+            background: white;
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0, 0, 0, 0.08);
+
+        }
+
+
+        .panel-cobro h2,
+        .panel-calculadora h2 {
+
+            margin-top: 0;
+
+            margin-bottom: 16px;
+
+        }
+
+
+        /* =================================================
+           FORMULARIO COBRO
+        ================================================= */
+
+        .formulario-cobro {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 12px;
+
+        }
+
+
+        .campo {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 6px;
+
+        }
+
+
+        .campo label {
+
+            font-weight: bold;
+
+            font-size: 13px;
+
+            color: #374151;
+
+        }
+
+
+        .campo input,
+        .campo select {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 8px;
+
+            background: white;
+
+            font-size: 14px;
+
+        }
+
+
+        .resultado-cobro {
+
+            margin-top: 16px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap: 10px;
+
+        }
+
+
+        .resultado-box {
+
+            background: #f9fafb;
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 10px;
+
+            padding: 12px;
+
+        }
+
+
+        .resultado-box span {
+
+            display: block;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .resultado-box strong {
+
+            font-size: 18px;
+
+        }
+
+
+        .btn-agregar-cobro {
+
+            margin-top: 15px;
+
+            width: 100%;
+
+            background: #2563eb;
+
+            color: white;
+
+        }
+
+
+        /* =================================================
+           COBROS POR VENDEDOR
+        ================================================= */
+
+        .cobros-vendedor {
+
+            margin-top: 22px;
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            background: #ffffff;
+
+        }
+
+
+        .cobros-vendedor-titulo {
+
+            background: #f8fafc;
+
+            padding: 16px;
+
+            border-bottom:
+                1px solid
+                #e5e7eb;
+
+        }
+
+
+        .cobros-vendedor-titulo h3 {
+
+            margin: 0 0 12px;
+
+            font-size: 18px;
+
+        }
+
+
+        .resumen-vendedor {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap: 10px;
+
+        }
+
+
+        .resumen-vendedor-card {
+
+            background: white;
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 8px;
+
+            padding: 10px;
+
+        }
+
+
+        .resumen-vendedor-card span {
+
+            display: block;
+
+            color: #6b7280;
+
+            font-size: 11px;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        .resumen-vendedor-card strong {
+
+            font-size: 17px;
+
+        }
+
+
+        .cobros-del-vendedor {
+
+            padding: 12px;
+
+        }
+
+
+        .cobro-item {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 12px;
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 10px;
+
+            margin-bottom: 10px;
+
+            background: #fafafa;
+
+        }
+
+
+        .cobro-item:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .cobro-info {
+
+            flex: 1;
+
+        }
+
+
+        .cobro-info strong {
+
+            display: block;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        .cobro-info small {
+
+            color: #6b7280;
+
+            line-height: 1.6;
+
+        }
+
+
+        .sin-cobros {
+
+            padding: 15px;
+
+            color: #6b7280;
+
+            text-align: center;
+
+            background: #f9fafb;
+
+            border-radius: 8px;
+
+        }
+
+
+        /* =================================================
+           CALCULADORA
+        ================================================= */
+
+        .panel-calculadora {
+
+            outline: none;
+
+        }
+
+
+        .panel-calculadora:focus {
+
+            box-shadow:
+                0 0 0 3px
+                rgba(
+                    37,
+                    99,
+                    235,
+                    0.12
+                ),
+                0 4px 15px
+                rgba(
+                    0,
+                    0,
+                    0,
+                    0.08
+                );
+
+        }
+
+
+        .calculadora-display {
+
+            width: 100%;
+
+            height: 78px;
+
+            background: #111827;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 10px 14px;
+
+            text-align: right;
+
+            font-size: 27px;
+
+            font-weight: bold;
+
+            margin-bottom: 10px;
+
+            outline: none;
+
+        }
+
+
+        .calculadora-teclas {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    1fr
+                );
+
+            gap: 7px;
+
+        }
+
+
+        .tecla {
+
+            min-height: 50px;
+
+            border-radius: 8px;
+
+            background: #e5e7eb;
+
+            color: #111827;
+
+            padding: 8px;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            border: none;
+
+            cursor: pointer;
+
+            transform: none !important;
+
+        }
+
+
+        .tecla:hover {
+
+            opacity: 0.85;
+
+        }
+
+
+        .tecla.operador {
+
+            background: #ddd6fe;
+
+            color: #5b21b6;
+
+        }
+
+
+        .tecla.igual {
+
+            background: #16a34a;
+
+            color: white;
+
+        }
+
+
+        .tecla.limpiar {
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+        }
+
+
+        .tecla.borrar {
+
+            background: #fef3c7;
+
+            color: #92400e;
+
+        }
+
+
+        .tecla.cero {
+
+            grid-column: span 2;
+
+        }
+
+
+        .calculadora-ayuda {
+
+            margin-top: 10px;
+
+            color: #6b7280;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+
+        }
+
+
+        /* =================================================
+           TABLAS SIMPLES
+        ================================================= */
+
+        .tabla-simple {
+
+            width: 100%;
+
+            min-width: 600px;
+
+        }
+
+
+        .tabla-simple input {
+
+            width: 100%;
+
+            padding: 8px;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 7px;
+
+            font-size: 14px;
+
+        }
+
+
+        .tabla-simple .precio-input {
+
+            text-align: right;
+
+        }
+
+
+        .tabla-simple th {
+
+            background: #1f2937;
+
+        }
+
+
+        .tabla-simple td {
+
+            background: white;
+
+        }
+
+
+        .tabla-simple td:first-child {
+
+            background: white;
+
+        }
+
+
+        /* =================================================
+           HISTORIAL
+        ================================================= */
+
+        .historial-vendedor {
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            margin-bottom: 18px;
+
+            background: white;
+
+        }
+
+
+        .historial-vendedor:last-child {
+
+            margin-bottom: 0;
+
+        }
+
+
+        .historial-vendedor-titulo {
+
+            background: #f8fafc;
+
+            padding: 16px 18px;
+
+            border-bottom:
+                1px solid
+                #e5e7eb;
+
+        }
+
+
+        .historial-vendedor-titulo h3 {
+
+            margin: 0 0 12px;
+
+            font-size: 18px;
+
+        }
+
+
+        .historial-vendedor-contenido {
+
+            padding: 12px;
+
+        }
+
+
+        .tabla-historial {
+
+            width: 100%;
+
+            min-width: 800px;
+
+            border-collapse: collapse;
+
+        }
+
+
+        .tabla-historial th {
+
+            background: #374151;
+
+            color: white;
+
+            padding: 9px;
+
+        }
+
+
+        .tabla-historial td {
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            padding: 9px;
+
+            text-align: center;
+
+        }
+
+
+        .historial-general-resumen {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap: 12px;
+
+            margin-top: 18px;
+
+        }
+
+
+        .historial-general-card {
+
+            background: #111827;
+
+            color: white;
+
+            border-radius: 10px;
+
+            padding: 16px;
+
+        }
+
+
+        .historial-general-card span {
+
+            display: block;
+
+            font-size: 12px;
+
+            opacity: 0.8;
+
+            margin-bottom: 5px;
+
+        }
+
+
+        .historial-general-card strong {
+
+            font-size: 21px;
+
+        }
+
+
+        .historial-total {
+
+            margin-top: 15px;
+
+            padding: 14px;
+
+            background: #f8fafc;
+
+            border-radius: 10px;
+
+            color: #374151;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+        }
+
+
+        .vacio {
+
+            text-align: center !important;
+
+            color: #6b7280;
+
+            padding: 20px !important;
+
+        }
+
+
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
+
+        @media (max-width: 1000px) {
+
+            .paneles-abajo {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            body {
+
+                padding: 10px;
+
+            }
+
+
+            .titulo-principal h1 {
+
+                font-size: 24px;
+
+            }
+
+
+            .formulario-cobro {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .resultado-cobro {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .resumen-vendedor {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .historial-general-resumen {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .barra-controles {
+
+                align-items: stretch;
+
+            }
+
+
+            .barra-controles button,
+            .barra-controles input[type="date"] {
+
+                width: 100%;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="contenedor">
+
+
+    <!-- =================================================
+         TITULO
+    ================================================= -->
+
+    <div class="titulo-principal">
+
+        <h1>
+            Control de Ventas
+        </h1>
+
+        <p>
+            Control diario de mercadería,
+            vendedores, cobros y precios.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         CONTROLES
+    ================================================= -->
+
+    <div class="barra-controles">
+
+        <label for="fecha">
+            Fecha:
+        </label>
+
+
+        <input
+            type="date"
+            id="fecha"
+        >
+
+
+        <button
+            class="btn-guardar"
+            onclick="guardarTodo()"
+        >
+            Guardar
+        </button>
+
+
+        <button
+            class="btn-vendedor"
+            onclick="agregarVendedor()"
+        >
+            + Agregar vendedor
+        </button>
+
+
+        <button
+            class="btn-eliminar-vendedor"
+            onclick="eliminarVendedor()"
+        >
+            - Eliminar vendedor
+        </button>
+
+
+        <button
+            class="btn-producto"
+            onclick="agregarProducto()"
+        >
+            + Agregar producto
+        </button>
+
+
+        <button
+            class="btn-eliminar-producto"
+            onclick="eliminarProducto()"
+        >
+            - Eliminar producto
+        </button>
+
+
+        <button
+            class="btn-borrar"
+            onclick="borrarDatosDelDia()"
+        >
+            Borrar datos
+        </button>
+
+    </div>
+
+
+    <!-- =================================================
+         TABLA PRINCIPAL
+    ================================================= -->
+
+    <div class="seccion">
+
+        <h2>
+            Ventas del día
+        </h2>
+
+
+        <div class="tabla-contenedor">
+
+            <table id="tablaVentas">
+
+                <thead>
+
+                    <tr id="encabezado"></tr>
+
+                </thead>
+
+
+                <tbody id="cuerpo"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         COBRO + CALCULADORA
+    ================================================= -->
+
+    <div class="paneles-abajo">
+
+
+        <!-- =================================================
+             COBRO
+        ================================================= -->
+
+        <div class="panel-cobro">
+
+            <h2>
+                Cobro
+            </h2>
+
+
+            <div class="formulario-cobro">
+
+
+                <div class="campo">
+
+                    <label for="cobroVendedor">
+                        Vendedor
+                    </label>
+
+
+                    <select
+                        id="cobroVendedor"
+                    ></select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="cobroProducto">
+                        Producto
+                    </label>
+
+
+                    <select
+                        id="cobroProducto"
+                    ></select>
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="cantidadLlevada">
+                        Cantidad llevada
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="cantidadLlevada"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="cantidadSobrante">
+                        Cantidad sobrante
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="cantidadSobrante"
+                        min="0"
+                        value="0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="precioVenta">
+                        Precio de venta
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="precioVenta"
+                        inputmode="numeric"
+                        value="$0"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="gananciaUnidad">
+                        Ganancia por unidad
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="gananciaUnidad"
+                        inputmode="numeric"
+                        value="$0"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="resultado-cobro">
+
+
+                <div class="resultado-box">
+
+                    <span>
+                        Vendió
+                    </span>
+
+
+                    <strong
+                        id="resultadoVendido"
+                    >
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="resultado-box">
+
+                    <span>
+                        Dinero que tiene que tener
+                    </span>
+
+
+                    <strong
+                        id="resultadoDinero"
+                    >
+                        $0
+                    </strong>
+
+                </div>
+
+
+                <div class="resultado-box">
+
+                    <span>
+                        Ganancia
+                    </span>
+
+
+                    <strong
+                        id="resultadoGanancia"
+                    >
+                        $0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="btn-agregar-cobro"
+                onclick="agregarCobro()"
+            >
+                + Agregar cobro
+            </button>
+
+
+            <!-- COBROS SEPARADOS POR VENDEDOR -->
+
+            <div
+                id="cobrosPorVendedor"
+            ></div>
+
+        </div>
+
+
+        <!-- =================================================
+             CALCULADORA
+        ================================================= -->
+
+        <div
+            class="panel-calculadora"
+            id="panelCalculadora"
+            tabindex="0"
+        >
+
+            <h2>
+                Calculadora
+            </h2>
+
+
+            <input
+                type="text"
+                id="calculadoraDisplay"
+                class="calculadora-display"
+                value="0"
+                readonly
+            >
+
+
+            <div class="calculadora-teclas">
+
+
+                <button
+                    type="button"
+                    class="tecla limpiar"
+                    onclick="calcLimpiar()"
+                >
+                    C
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla borrar"
+                    onclick="calcBorrar()"
+                >
+                    ⌫
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla operador"
+                    onclick="calcOperacion('%')"
+                >
+                    %
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla operador"
+                    onclick="calcOperacion('÷')"
+                >
+                    ÷
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('7')"
+                >
+                    7
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('8')"
+                >
+                    8
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('9')"
+                >
+                    9
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla operador"
+                    onclick="calcOperacion('×')"
+                >
+                    ×
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('4')"
+                >
+                    4
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('5')"
+                >
+                    5
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('6')"
+                >
+                    6
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla operador"
+                    onclick="calcOperacion('−')"
+                >
+                    −
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('1')"
+                >
+                    1
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('2')"
+                >
+                    2
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('3')"
+                >
+                    3
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla operador"
+                    onclick="calcOperacion('+')"
+                >
+                    +
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla cero"
+                    onclick="calcNumero('0')"
+                >
+                    0
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla"
+                    onclick="calcNumero('.')"
+                >
+                    .
+                </button>
+
+
+                <button
+                    type="button"
+                    class="tecla igual"
+                    onclick="calcResultado()"
+                >
+                    =
+                </button>
+
+            </div>
+
+
+            <div class="calculadora-ayuda">
+
+                Para usar el teclado,
+                primero hacé clic dentro
+                de la calculadora.
+
+                <br><br>
+
+                Ejemplos:
+
+                <strong>
+                    1.000 × 2
+                </strong>
+
+                ,
+
+                <strong>
+                    5.000 ÷ 2
+                </strong>
+
+                ,
+
+                <strong>
+                    10 % 3
+                </strong>.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PRODUCTOS Y PRECIOS
+    ================================================= -->
+
+    <div class="seccion">
+
+        <h2>
+            Productos y precios
+        </h2>
+
+
+        <div class="tabla-contenedor">
+
+            <table class="tabla-simple">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Producto
+                        </th>
+
+
+                        <th>
+                            Precio
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="listaPrecios"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PRECIOS DE REVENTA
+    ================================================= -->
+
+    <div class="seccion">
+
+        <h2>
+            Precios de reventa
+        </h2>
+
+
+        <div class="tabla-contenedor">
+
+            <table class="tabla-simple">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Producto
+                        </th>
+
+
+                        <th>
+                            Precio
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="listaReventa"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTORIAL
+    ================================================= -->
+
+    <div class="seccion">
+
+        <h2>
+            Historial de mercadería
+        </h2>
+
+
+        <p
+            style="
+                color:#6b7280;
+                margin-top:-8px;
+                margin-bottom:18px;
+            "
+        >
+            Historial separado por vendedor.
+            La ganancia total general se obtiene
+            sumando las ganancias de todos los vendedores.
+        </p>
+
+
+        <div
+            id="historialPorVendedor"
+        ></div>
+
+
+        <!-- =================================================
+             TOTAL GENERAL
+        ================================================= -->
+
+        <div
+            class="historial-general-resumen"
+        >
+
+            <div
+                class="historial-general-card"
+            >
+
+                <span>
+                    Mercadería vendida total
+                </span>
+
+
+                <strong
+                    id="historialVendidoTotal"
+                >
+                    0
+                </strong>
+
+            </div>
+
+
+            <div
+                class="historial-general-card"
+            >
+
+                <span>
+                    Plata total
+                </span>
+
+
+                <strong
+                    id="historialDineroTotal"
+                >
+                    $0
+                </strong>
+
+            </div>
+
+
+            <div
+                class="historial-general-card"
+            >
+
+                <span>
+                    Ganancia total
+                </span>
+
+
+                <strong
+                    id="historialGananciaTotal"
+                >
+                    $0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="historial-total"
+            id="historialTotal"
+        >
+            Sin registros.
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         BORRAR HISTORIAL
+    ================================================= -->
+
+    <div
+        style="
+            text-align:center;
+            margin:25px 0;
+        "
+    >
+
+        <button
+            class="btn-eliminar-vendedor"
+            onclick="borrarHistorial()"
+        >
+            Borrar historial completo
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
+const STORAGE_CATALOGOS =
+    "catalogo_productos_completo_v1";
+
+
+const STORAGE_REVENTA =
+    "precios_reventa_completo_v1";
+
+
+const STORAGE_VENTAS =
+    "ventas_ambulantes_";
+
+
+const STORAGE_COBROS =
+    "cobros_diarios_completo_v1";
+
+
+const STORAGE_HISTORIAL =
+    "historial_mercaderia_ganancias_v7";
+
+
+/* =========================================================
+   VENDEDORES INICIALES
+========================================================= */
+
+const VENDEDORES_INICIALES = [
+
+    {
+        id: "v_tati",
+        nombre: "Tati"
+    },
+
+    {
+        id: "v_benja",
+        nombre: "Benja"
+    },
+
+    {
+        id: "v_gabi",
+        nombre: "Gabi"
+    },
+
+    {
+        id: "v_alan",
+        nombre: "Alan"
+    },
+
+    {
+        id: "v_lalo",
+        nombre: "Lalo"
+    }
+
+];
+
+
+/* =========================================================
+   PRODUCTOS INICIALES
+========================================================= */
+
+const PRODUCTOS_INICIALES = [
+
+    {
+        id: "p_tortafrita",
+        nombre: "Tortafrita",
+        precio: 1000,
+        ganancia: 200
+    },
+
+    {
+        id: "p_sandwich",
+        nombre: "Sandwiches de miga",
+        precio: 3000,
+        ganancia: 0
+    },
+
+    {
+        id: "p_ensalada",
+        nombre: "Ensaladas de frutas",
+        precio: 3000,
+        ganancia: 0
+    },
+
+    {
+        id: "p_bandeja",
+        nombre: "Bandejas de alfajor / cubanitos",
+        precio: 3000,
+        ganancia: 0
+    },
+
+    {
+        id: "p_bollos",
+        nombre: "Bollos",
+        precio: 1000,
+        ganancia: 0
+    },
+
+    {
+        id: "p_cafe",
+        nombre: "Café",
+        precio: 1000,
+        ganancia: 0
+    },
+
+    {
+        id: "p_bonbon",
+        nombre: "Bon o Bon",
+        precio: 1000,
+        ganancia: 0
+    }
+
+];
+
+
+/* =========================================================
+   PRECIOS DE REVENTA
+========================================================= */
+
+const PRECIOS_REVENTA_INICIALES = [
+
+    {
+        id: "r_tortafrita",
+        nombre: "Tortafrita",
+        precio: 1000
+    },
+
+    {
+        id: "r_sandwich",
+        nombre: "Sandwiches de miga",
+        precio: 2500
+    },
+
+    {
+        id: "r_ensalada",
+        nombre: "Ensaladas de frutas",
+        precio: 2500
+    },
+
+    {
+        id: "r_bandeja",
+        nombre: "Bandeja",
+        precio: 3000
+    },
+
+    {
+        id: "r_bollos",
+        nombre: "Bollos",
+        precio: 1000
+    }
+
+];
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let vendedores = [];
+
+let productos = [];
+
+let preciosReventa = [];
+
+let ventasDia = {};
+
+let cobrosDia = [];
+
+let historialMercaderia = [];
+
+
+/* =========================================================
+   FUNCIONES GENERALES
+========================================================= */
+
+function nuevoId(prefijo) {
+
+    return (
+
+        prefijo +
+        "_" +
+        Date.now().toString(36) +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 7)
+
+    );
+
+}
+
+
+function clonarDatos(datos) {
+
+    return JSON.parse(
+        JSON.stringify(datos)
+    );
+
+}
+
+
+function convertirPrecio(valor) {
+
+    if (
+        typeof valor === "number"
+    ) {
+
+        return isNaN(valor)
+            ? 0
+            : valor;
+
+    }
+
+
+    let texto =
+        String(valor || "")
+            .trim();
+
+
+    texto =
+        texto.replace(
+            /\$/g,
+            ""
+        );
+
+
+    texto =
+        texto.replace(
+            /[^\d-]/g,
+            ""
+        );
+
+
+    if (
+        texto === "" ||
+        texto === "-"
+    ) {
+
+        return 0;
+
+    }
+
+
+    const numero =
+        Number(texto);
+
+
+    return isNaN(numero)
+        ? 0
+        : numero;
+
+}
+
+
+function formatearPesos(valor) {
+
+    const numero =
+        Number(valor) || 0;
+
+
+    return new Intl.NumberFormat(
+
+        "es-AR",
+
+        {
+            style: "currency",
+            currency: "ARS",
+            maximumFractionDigits: 0
+        }
+
+    ).format(numero);
+
+}
+
+
+function formatearNumero(valor) {
+
+    const numero =
+        Number(valor) || 0;
+
+
+    return new Intl.NumberFormat(
+        "es-AR"
+    ).format(numero);
+
+}
+
+
+function fechaArgentina(fecha) {
+
+    const partes =
+        String(fecha).split("-");
+
+
+    if (
+        partes.length !== 3
+    ) {
+
+        return fecha;
+
+    }
+
+
+    return (
+
+        partes[2] +
+        "/" +
+        partes[1] +
+        "/" +
+        partes[0]
+
+    );
+
+}
+
+
+function obtenerFechaHoy() {
+
+    const ahora =
+        new Date();
+
+
+    const year =
+        ahora.getFullYear();
+
+
+    const month =
+        String(
+            ahora.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            ahora.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    return (
+
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+
+    );
+
+}
+
+
+/* =========================================================
+   CATALOGOS
+========================================================= */
+
+function cargarCatalogos() {
+
+    const guardado =
+        localStorage.getItem(
+            STORAGE_CATALOGOS
+        );
+
+
+    if (guardado) {
+
+        try {
+
+            const datos =
+                JSON.parse(
+                    guardado
+                );
+
+
+            vendedores =
+                Array.isArray(
+                    datos.vendedores
+                )
+                    ? datos.vendedores
+                    : clonarDatos(
+                        VENDEDORES_INICIALES
+                    );
+
+
+            productos =
+                Array.isArray(
+                    datos.productos
+                )
+                    ? datos.productos
+                    : clonarDatos(
+                        PRODUCTOS_INICIALES
+                    );
+
+
+        } catch (error) {
+
+            vendedores =
+                clonarDatos(
+                    VENDEDORES_INICIALES
+                );
+
+
+            productos =
+                clonarDatos(
+                    PRODUCTOS_INICIALES
+                );
+
+        }
+
+    } else {
+
+        vendedores =
+            clonarDatos(
+                VENDEDORES_INICIALES
+            );
+
+
+        productos =
+            clonarDatos(
+                PRODUCTOS_INICIALES
+            );
+
+    }
+
+
+    const guardadoReventa =
+        localStorage.getItem(
+            STORAGE_REVENTA
+        );
+
+
+    if (guardadoReventa) {
+
+        try {
+
+            const datos =
+                JSON.parse(
+                    guardadoReventa
+                );
+
+
+            preciosReventa =
+                Array.isArray(
+                    datos
+                )
+                    ? datos
+                    : clonarDatos(
+                        PRECIOS_REVENTA_INICIALES
+                    );
+
+
+        } catch (error) {
+
+            preciosReventa =
+                clonarDatos(
+                    PRECIOS_REVENTA_INICIALES
+                );
+
+        }
+
+    } else {
+
+        preciosReventa =
+            clonarDatos(
+                PRECIOS_REVENTA_INICIALES
+            );
+
+    }
+
+}
+
+
+function guardarCatalogos() {
+
+    localStorage.setItem(
+
+        STORAGE_CATALOGOS,
+
+        JSON.stringify({
+
+            vendedores:
+                vendedores,
+
+            productos:
+                productos
+
+        })
+
+    );
+
+
+    localStorage.setItem(
+
+        STORAGE_REVENTA,
+
+        JSON.stringify(
+            preciosReventa
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   VENTAS
+========================================================= */
+
+function crearVentasVacias() {
+
+    const datos = {};
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            datos[
+                vendedor.id
+            ] = {};
+
+
+            productos.forEach(
+                producto => {
+
+                    datos[
+                        vendedor.id
+                    ][
+                        producto.id
+                    ] = 0;
+
+                }
+            );
+
+        }
+    );
+
+
+    return datos;
+
+}
+
+
+function prepararVentasCargadas(datos) {
+
+    const nuevasVentas =
+        crearVentasVacias();
+
+
+    if (
+        !datos ||
+        typeof datos !== "object"
+    ) {
+
+        return nuevasVentas;
+
+    }
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            if (
+                datos[
+                    vendedor.id
+                ]
+            ) {
+
+                productos.forEach(
+                    producto => {
+
+                        nuevasVentas[
+                            vendedor.id
+                        ][
+                            producto.id
+                        ] =
+                            Number(
+                                datos[
+                                    vendedor.id
+                                ][
+                                    producto.id
+                                ]
+                            ) || 0;
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+
+    return nuevasVentas;
+
+}
+
+
+function cargarVentasDelDia() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    const guardado =
+        localStorage.getItem(
+            STORAGE_VENTAS +
+            fecha
+        );
+
+
+    if (guardado) {
+
+        try {
+
+            ventasDia =
+                prepararVentasCargadas(
+                    JSON.parse(
+                        guardado
+                    )
+                );
+
+
+        } catch (error) {
+
+            ventasDia =
+                crearVentasVacias();
+
+        }
+
+    } else {
+
+        ventasDia =
+            crearVentasVacias();
+
+    }
+
+}
+
+
+function guardarVentasDelDia() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    localStorage.setItem(
+
+        STORAGE_VENTAS +
+        fecha,
+
+        JSON.stringify(
+            ventasDia
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   TABLA PRINCIPAL
+========================================================= */
+
+function renderTablaVentas() {
+
+    const encabezado =
+        document.getElementById(
+            "encabezado"
+        );
+
+
+    const cuerpo =
+        document.getElementById(
+            "cuerpo"
+        );
+
+
+    encabezado.innerHTML = "";
+
+    cuerpo.innerHTML = "";
+
+
+    const thProducto =
+        document.createElement(
+            "th"
+        );
+
+
+    thProducto.textContent =
+        "Mercadería";
+
+
+    encabezado.appendChild(
+        thProducto
+    );
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            const th =
+                document.createElement(
+                    "th"
+                );
+
+
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+                "text";
+
+
+            input.className =
+                "input-nombre";
+
+
+            input.value =
+                vendedor.nombre;
+
+
+            input.style.color =
+                "white";
+
+
+            input.addEventListener(
+                "change",
+                function() {
+
+                    const nombre =
+                        this.value.trim();
+
+
+                    if (
+                        nombre === ""
+                    ) {
+
+                        this.value =
+                            vendedor.nombre;
+
+                        return;
+
+                    }
+
+
+                    vendedor.nombre =
+                        nombre;
+
+
+                    guardarCatalogos();
+
+                    renderCobroSelectores();
+
+                    renderCobrosPorVendedor();
+
+                    renderHistorialPorVendedor();
+
+                }
+            );
+
+
+            th.appendChild(
+                input
+            );
+
+
+            encabezado.appendChild(
+                th
+            );
+
+        }
+    );
+
+
+    productos.forEach(
+        producto => {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const tdProducto =
+                document.createElement(
+                    "td"
+                );
+
+
+            const inputProducto =
+                document.createElement(
+                    "input"
+                );
+
+
+            inputProducto.type =
+                "text";
+
+
+            inputProducto.className =
+                "input-nombre";
+
+
+            inputProducto.value =
+                producto.nombre;
+
+
+            inputProducto.addEventListener(
+                "change",
+                function() {
+
+                    const nombre =
+                        this.value.trim();
+
+
+                    if (
+                        nombre === ""
+                    ) {
+
+                        this.value =
+                            producto.nombre;
+
+                        return;
+
+                    }
+
+
+                    producto.nombre =
+                        nombre;
+
+
+                    guardarCatalogos();
+
+                    renderTablaVentas();
+
+                    renderCobroSelectores();
+
+                    renderPrecios();
+
+                    renderCobrosPorVendedor();
+
+                    renderHistorialPorVendedor();
+
+                }
+            );
+
+
+            tdProducto.appendChild(
+                inputProducto
+            );
+
+
+            tr.appendChild(
+                tdProducto
+            );
+
+
+            vendedores.forEach(
+                vendedor => {
+
+                    const td =
+                        document.createElement(
+                            "td"
+                        );
+
+
+                    const input =
+                        document.createElement(
+                            "input"
+                        );
+
+
+                    input.type =
+                        "number";
+
+
+                    input.min =
+                        "0";
+
+
+                    input.className =
+                        "cantidad-input";
+
+
+                    input.value =
+                        ventasDia[
+                            vendedor.id
+                        ] &&
+                        ventasDia[
+                            vendedor.id
+                        ][
+                            producto.id
+                        ] !== undefined
+
+                            ? ventasDia[
+                                vendedor.id
+                            ][
+                                producto.id
+                            ]
+
+                            : 0;
+
+
+                    input.addEventListener(
+                        "input",
+                        function() {
+
+                            if (
+                                !ventasDia[
+                                    vendedor.id
+                                ]
+                            ) {
+
+                                ventasDia[
+                                    vendedor.id
+                                ] = {};
+
+                            }
+
+
+                            ventasDia[
+                                vendedor.id
+                            ][
+                                producto.id
+                            ] =
+                                Number(
+                                    this.value
+                                ) || 0;
+
+                        }
+                    );
+
+
+                    td.appendChild(
+                        input
+                    );
+
+
+                    tr.appendChild(
+                        td
+                    );
+
+                }
+            );
+
+
+            cuerpo.appendChild(
+                tr
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   VENDEDORES
+========================================================= */
+
+function agregarVendedor() {
+
+    const nombre =
+        prompt(
+            "Nombre del nuevo vendedor:"
+        );
+
+
+    if (!nombre) {
+
+        return;
+
+    }
+
+
+    const nombreLimpio =
+        nombre.trim();
+
+
+    if (
+        nombreLimpio === ""
+    ) {
+
+        return;
+
+    }
+
+
+    const nuevoVendedor = {
+
+        id:
+            nuevoId("v"),
+
+        nombre:
+            nombreLimpio
+
+    };
+
+
+    vendedores.push(
+        nuevoVendedor
+    );
+
+
+    ventasDia[
+        nuevoVendedor.id
+    ] = {};
+
+
+    productos.forEach(
+        producto => {
+
+            ventasDia[
+                nuevoVendedor.id
+            ][
+                producto.id
+            ] = 0;
+
+        }
+    );
+
+
+    guardarCatalogos();
+
+    renderTablaVentas();
+
+    renderCobroSelectores();
+
+    renderCobrosPorVendedor();
+
+    renderHistorialPorVendedor();
+
+}
+
+
+function eliminarVendedor() {
+
+    if (
+        vendedores.length <= 1
+    ) {
+
+        alert(
+            "Tiene que quedar al menos un vendedor."
+        );
+
+        return;
+
+    }
+
+
+    const nombres =
+        vendedores
+            .map(
+                (vendedor, index) =>
+                    `${index + 1}. ${vendedor.nombre}`
+            )
+            .join("\n");
+
+
+    const respuesta =
+        prompt(
+
+            "Escribí el número del vendedor que querés eliminar:\n\n" +
+            nombres
+
+        );
+
+
+    const indice =
+        Number(
+            respuesta
+        ) - 1;
+
+
+    if (
+        isNaN(indice) ||
+        indice < 0 ||
+        indice >= vendedores.length
+    ) {
+
+        return;
+
+    }
+
+
+    const eliminado =
+        vendedores[indice];
+
+
+    if (
+        !confirm(
+            `¿Eliminar a ${eliminado.nombre}?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    delete ventasDia[
+        eliminado.id
+    ];
+
+
+    vendedores.splice(
+        indice,
+        1
+    );
+
+
+    guardarCatalogos();
+
+    renderTablaVentas();
+
+    renderCobroSelectores();
+
+    renderCobrosPorVendedor();
+
+    renderHistorialPorVendedor();
+
+}
+
+
+/* =========================================================
+   PRODUCTOS
+========================================================= */
+
+function agregarProducto() {
+
+    const nombre =
+        prompt(
+            "Nombre del nuevo producto:"
+        );
+
+
+    if (!nombre) {
+
+        return;
+
+    }
+
+
+    const nombreLimpio =
+        nombre.trim();
+
+
+    if (
+        nombreLimpio === ""
+    ) {
+
+        return;
+
+    }
+
+
+    const precioTexto =
+        prompt(
+            "Precio del producto:\nEjemplo: 3.000"
+        );
+
+
+    const precio =
+        convertirPrecio(
+            precioTexto
+        );
+
+
+    const nuevoProducto = {
+
+        id:
+            nuevoId("p"),
+
+        nombre:
+            nombreLimpio,
+
+        precio:
+            precio,
+
+        ganancia:
+            0
+
+    };
+
+
+    productos.push(
+        nuevoProducto
+    );
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            if (
+                !ventasDia[
+                    vendedor.id
+                ]
+            ) {
+
+                ventasDia[
+                    vendedor.id
+                ] = {};
+
+            }
+
+
+            ventasDia[
+                vendedor.id
+            ][
+                nuevoProducto.id
+            ] = 0;
+
+        }
+    );
+
+
+    guardarCatalogos();
+
+    renderTablaVentas();
+
+    renderCobroSelectores();
+
+    renderPrecios();
+
+}
+
+
+function eliminarProducto() {
+
+    if (
+        productos.length <= 1
+    ) {
+
+        alert(
+            "Tiene que quedar al menos un producto."
+        );
+
+        return;
+
+    }
+
+
+    const nombres =
+        productos
+            .map(
+                (producto, index) =>
+                    `${index + 1}. ${producto.nombre}`
+            )
+            .join("\n");
+
+
+    const respuesta =
+        prompt(
+
+            "Escribí el número del producto que querés eliminar:\n\n" +
+            nombres
+
+        );
+
+
+    const indice =
+        Number(
+            respuesta
+        ) - 1;
+
+
+    if (
+        isNaN(indice) ||
+        indice < 0 ||
+        indice >= productos.length
+    ) {
+
+        return;
+
+    }
+
+
+    const eliminado =
+        productos[indice];
+
+
+    if (
+        !confirm(
+            `¿Eliminar ${eliminado.nombre}?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            if (
+                ventasDia[
+                    vendedor.id
+                ]
+            ) {
+
+                delete ventasDia[
+                    vendedor.id
+                ][
+                    eliminado.id
+                ];
+
+            }
+
+        }
+    );
+
+
+    productos.splice(
+        indice,
+        1
+    );
+
+
+    guardarCatalogos();
+
+    renderTablaVentas();
+
+    renderCobroSelectores();
+
+    renderPrecios();
+
+}
+
+
+/* =========================================================
+   PRODUCTOS Y PRECIOS
+========================================================= */
+
+function renderPrecios() {
+
+    const tbody =
+        document.getElementById(
+            "listaPrecios"
+        );
+
+
+    tbody.innerHTML = "";
+
+
+    productos.forEach(
+        producto => {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const tdNombre =
+                document.createElement(
+                    "td"
+                );
+
+
+            const inputNombre =
+                document.createElement(
+                    "input"
+                );
+
+
+            inputNombre.type =
+                "text";
+
+
+            inputNombre.value =
+                producto.nombre;
+
+
+            inputNombre.addEventListener(
+                "change",
+                function() {
+
+                    const nombre =
+                        this.value.trim();
+
+
+                    if (
+                        nombre === ""
+                    ) {
+
+                        this.value =
+                            producto.nombre;
+
+                        return;
+
+                    }
+
+
+                    producto.nombre =
+                        nombre;
+
+
+                    guardarCatalogos();
+
+                    renderTablaVentas();
+
+                    renderCobroSelectores();
+
+                    renderPrecios();
+
+                    renderCobrosPorVendedor();
+
+                    renderHistorialPorVendedor();
+
+                }
+            );
+
+
+            tdNombre.appendChild(
+                inputNombre
+            );
+
+
+            const tdPrecio =
+                document.createElement(
+                    "td"
+                );
+
+
+            const inputPrecio =
+                document.createElement(
+                    "input"
+                );
+
+
+            inputPrecio.type =
+                "text";
+
+
+            inputPrecio.inputMode =
+                "numeric";
+
+
+            inputPrecio.className =
+                "precio-input";
+
+
+            inputPrecio.value =
+                formatearPesos(
+                    producto.precio
+                );
+
+
+            inputPrecio.addEventListener(
+                "input",
+                function() {
+
+                    producto.precio =
+                        convertirPrecio(
+                            this.value
+                        );
+
+                    actualizarDatosCobroProducto();
+
+                }
+            );
+
+
+            inputPrecio.addEventListener(
+                "blur",
+                function() {
+
+                    producto.precio =
+                        convertirPrecio(
+                            this.value
+                        );
+
+
+                    this.value =
+                        formatearPesos(
+                            producto.precio
+                        );
+
+
+                    guardarCatalogos();
+
+                    actualizarDatosCobroProducto();
+
+                }
+            );
+
+
+            tdPrecio.appendChild(
+                inputPrecio
+            );
+
+
+            tr.appendChild(
+                tdNombre
+            );
+
+
+            tr.appendChild(
+                tdPrecio
+            );
+
+
+            tbody.appendChild(
+                tr
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   REVENTA
+========================================================= */
+
+function renderPreciosReventa() {
+
+    const tbody =
+        document.getElementById(
+            "listaReventa"
+        );
+
+
+    tbody.innerHTML = "";
+
+
+    preciosReventa.forEach(
+        producto => {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            const tdNombre =
+                document.createElement(
+                    "td"
+                );
+
+
+            const inputNombre =
+                document.createElement(
+                    "input"
+                );
+
+
+            inputNombre.type =
+                "text";
+
+
+            inputNombre.value =
+                producto.nombre;
+
+
+            inputNombre.addEventListener(
+                "change",
+                function() {
+
+                    const nombre =
+                        this.value.trim();
+
+
+                    if (
+                        nombre === ""
+                    ) {
+
+                        this.value =
+                            producto.nombre;
+
+                        return;
+
+                    }
+
+
+                    producto.nombre =
+                        nombre;
+
+
+                    localStorage.setItem(
+
+                        STORAGE_REVENTA,
+
+                        JSON.stringify(
+                            preciosReventa
+                        )
+
+                    );
+
+
+                    renderPreciosReventa();
+
+                }
+            );
+
+
+            tdNombre.appendChild(
+                inputNombre
+            );
+
+
+            const tdPrecio =
+                document.createElement(
+                    "td"
+                );
+
+
+            const inputPrecio =
+                document.createElement(
+                    "input"
+                );
+
+
+            inputPrecio.type =
+                "text";
+
+
+            inputPrecio.inputMode =
+                "numeric";
+
+
+            inputPrecio.className =
+                "precio-input";
+
+
+            inputPrecio.value =
+                formatearPesos(
+                    producto.precio
+                );
+
+
+            inputPrecio.addEventListener(
+                "blur",
+                function() {
+
+                    producto.precio =
+                        convertirPrecio(
+                            this.value
+                        );
+
+
+                    this.value =
+                        formatearPesos(
+                            producto.precio
+                        );
+
+
+                    localStorage.setItem(
+
+                        STORAGE_REVENTA,
+
+                        JSON.stringify(
+                            preciosReventa
+                        )
+
+                    );
+
+                }
+            );
+
+
+            tdPrecio.appendChild(
+                inputPrecio
+            );
+
+
+            tr.appendChild(
+                tdNombre
+            );
+
+
+            tr.appendChild(
+                tdPrecio
+            );
+
+
+            tbody.appendChild(
+                tr
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   COBRO
+========================================================= */
+
+function renderCobroSelectores() {
+
+    const selectVendedor =
+        document.getElementById(
+            "cobroVendedor"
+        );
+
+
+    const selectProducto =
+        document.getElementById(
+            "cobroProducto"
+        );
+
+
+    selectVendedor.innerHTML = "";
+
+    selectProducto.innerHTML = "";
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                vendedor.id;
+
+
+            option.textContent =
+                vendedor.nombre;
+
+
+            selectVendedor.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    productos.forEach(
+        producto => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                producto.id;
+
+
+            option.textContent =
+                producto.nombre;
+
+
+            selectProducto.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    actualizarDatosCobroProducto();
+
+}
+
+
+function buscarProducto(id) {
+
+    return productos.find(
+        producto =>
+            producto.id === id
+    );
+
+}
+
+
+function actualizarDatosCobroProducto() {
+
+    const selectProducto =
+        document.getElementById(
+            "cobroProducto"
+        );
+
+
+    const producto =
+        buscarProducto(
+            selectProducto.value
+        );
+
+
+    if (!producto) {
+
+        return;
+
+    }
+
+
+    const precioInput =
+        document.getElementById(
+            "precioVenta"
+        );
+
+
+    const gananciaInput =
+        document.getElementById(
+            "gananciaUnidad"
+        );
+
+
+    precioInput.value =
+        formatearPesos(
+            producto.precio
+        );
+
+
+    let ganancia =
+        Number(
+            producto.ganancia
+        ) || 0;
+
+
+    /* Tortafrita gana $200 por unidad */
+
+    if (
+        producto.nombre
+            .toLowerCase()
+            .includes(
+                "tortafrita"
+            )
+    ) {
+
+        ganancia = 200;
+
+        producto.ganancia =
+            200;
+
+    }
+
+
+    gananciaInput.value =
+        formatearPesos(
+            ganancia
+        );
+
+
+    calcularCobro();
+
+}
+
+
+function calcularCobro() {
+
+    const llevada =
+        Number(
+            document.getElementById(
+                "cantidadLlevada"
+            ).value
+        ) || 0;
+
+
+    const sobrante =
+        Number(
+            document.getElementById(
+                "cantidadSobrante"
+            ).value
+        ) || 0;
+
+
+    const precio =
+        convertirPrecio(
+            document.getElementById(
+                "precioVenta"
+            ).value
+        );
+
+
+    const gananciaUnidad =
+        convertirPrecio(
+            document.getElementById(
+                "gananciaUnidad"
+            ).value
+        );
+
+
+    let vendido =
+        llevada - sobrante;
+
+
+    if (
+        vendido < 0
+    ) {
+
+        vendido = 0;
+
+    }
+
+
+    const dinero =
+        vendido *
+        precio;
+
+
+    const ganancia =
+        vendido *
+        gananciaUnidad;
+
+
+    document.getElementById(
+        "resultadoVendido"
+    ).textContent =
+        formatearNumero(
+            vendido
+        );
+
+
+    document.getElementById(
+        "resultadoDinero"
+    ).textContent =
+        formatearPesos(
+            dinero
+        );
+
+
+    document.getElementById(
+        "resultadoGanancia"
+    ).textContent =
+        formatearPesos(
+            ganancia
+        );
+
+}
+
+
+function guardarCobrosDelDia() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    localStorage.setItem(
+
+        STORAGE_COBROS +
+        "_" +
+        fecha,
+
+        JSON.stringify(
+            cobrosDia
+        )
+
+    );
+
+}
+
+
+function cargarCobrosDelDia() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    const guardado =
+        localStorage.getItem(
+
+            STORAGE_COBROS +
+            "_" +
+            fecha
+
+        );
+
+
+    if (guardado) {
+
+        try {
+
+            const datos =
+                JSON.parse(
+                    guardado
+                );
+
+
+            cobrosDia =
+                Array.isArray(
+                    datos
+                )
+                    ? datos
+                    : [];
+
+
+        } catch (error) {
+
+            cobrosDia = [];
+
+        }
+
+    } else {
+
+        cobrosDia = [];
+
+    }
+
+}
+
+
+function agregarCobro() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    const vendedorId =
+        document.getElementById(
+            "cobroVendedor"
+        ).value;
+
+
+    const productoId =
+        document.getElementById(
+            "cobroProducto"
+        ).value;
+
+
+    const llevada =
+        Number(
+            document.getElementById(
+                "cantidadLlevada"
+            ).value
+        ) || 0;
+
+
+    const sobrante =
+        Number(
+            document.getElementById(
+                "cantidadSobrante"
+            ).value
+        ) || 0;
+
+
+    const precioVenta =
+        convertirPrecio(
+            document.getElementById(
+                "precioVenta"
+            ).value
+        );
+
+
+    const gananciaUnidad =
+        convertirPrecio(
+            document.getElementById(
+                "gananciaUnidad"
+            ).value
+        );
+
+
+    const vendido =
+        Math.max(
+            llevada - sobrante,
+            0
+        );
+
+
+    const dinero =
+        vendido *
+        precioVenta;
+
+
+    const ganancia =
+        vendido *
+        gananciaUnidad;
+
+
+    if (
+        llevada <= 0
+    ) {
+
+        alert(
+            "La cantidad llevada tiene que ser mayor que 0."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        sobrante > llevada
+    ) {
+
+        alert(
+            "La cantidad sobrante no puede ser mayor que la llevada."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        vendido <= 0
+    ) {
+
+        alert(
+            "No hay unidades vendidas para registrar."
+        );
+
+        return;
+
+    }
+
+
+    const vendedor =
+        vendedores.find(
+            item =>
+                item.id ===
+                vendedorId
+        );
+
+
+    const producto =
+        productos.find(
+            item =>
+                item.id ===
+                productoId
+        );
+
+
+    const idCobro =
+        nuevoId(
+            "cobro"
+        );
+
+
+    /* =================================================
+       GUARDAR COBRO
+    ================================================= */
+
+    const cobro = {
+
+        id:
+            idCobro,
+
+        fecha:
+            fecha,
+
+        vendedorId:
+            vendedorId,
+
+        productoId:
+            productoId,
+
+        llevada:
+            llevada,
+
+        sobrante:
+            sobrante,
+
+        vendido:
+            vendido,
+
+        precioVenta:
+            precioVenta,
+
+        gananciaUnidad:
+            gananciaUnidad,
+
+        dinero:
+            dinero,
+
+        ganancia:
+            ganancia
+
+    };
+
+
+    cobrosDia.push(
+        cobro
+    );
+
+
+    /* =================================================
+       GUARDAR HISTORIAL
+    ================================================= */
+
+    historialMercaderia.push({
+
+        id:
+            idCobro,
+
+        fecha:
+            fecha,
+
+        vendedorId:
+            vendedorId,
+
+        vendedor:
+            vendedor
+                ? vendedor.nombre
+                : "Sin vendedor",
+
+        productoId:
+            productoId,
+
+        producto:
+            producto
+                ? producto.nombre
+                : "Sin producto",
+
+        llevada:
+            llevada,
+
+        vendido:
+            vendido,
+
+        dinero:
+            dinero,
+
+        ganancia:
+            ganancia
+
+    });
+
+
+    guardarCobrosDelDia();
+
+    guardarHistorial();
+
+
+    renderCobrosPorVendedor();
+
+    renderHistorialPorVendedor();
+
+
+    document.getElementById(
+        "cantidadLlevada"
+    ).value = 0;
+
+
+    document.getElementById(
+        "cantidadSobrante"
+    ).value = 0;
+
+
+    calcularCobro();
+
+}
+
+
+/* =========================================================
+   COBROS POR VENDEDOR
+========================================================= */
+
+function renderCobrosPorVendedor() {
+
+    const contenedor =
+        document.getElementById(
+            "cobrosPorVendedor"
+        );
+
+
+    contenedor.innerHTML = "";
+
+
+    vendedores.forEach(
+        vendedor => {
+
+            const cobros =
+                cobrosDia.filter(
+                    cobro =>
+                        cobro.vendedorId ===
+                        vendedor.id
+                );
+
+
+            let totalUnidades = 0;
+
+            let totalDinero = 0;
+
+            let totalGanancia = 0;
+
+
+            cobros.forEach(
+                cobro => {
+
+                    totalUnidades +=
+                        Number(
+                            cobro.vendido
+                        ) || 0;
+
+
+                    totalDinero +=
+                        Number(
+                            cobro.dinero
+                        ) || 0;
+
+
+                    totalGanancia +=
+                        Number(
+                            cobro.ganancia
+                        ) || 0;
+
+                }
+            );
+
+
+            const bloque =
+                document.createElement(
+                    "div"
+                );
+
+
+            bloque.className =
+                "cobros-vendedor";
+
+
+            const encabezado =
+                document.createElement(
+                    "div"
+                );
+
+
+            encabezado.className =
+                "cobros-vendedor-titulo";
+
+
+            encabezado.innerHTML = `
+
+                <h3>
+                    ${vendedor.nombre}
+                </h3>
+
+
+                <div class="resumen-vendedor">
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Unidades vendidas
+                        </span>
+
+                        <strong>
+                            ${formatearNumero(
+                                totalUnidades
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Total a entregar
+                        </span>
+
+                        <strong>
+                            ${formatearPesos(
+                                totalDinero
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Ganancia
+                        </span>
+
+                        <strong>
+                            ${formatearPesos(
+                                totalGanancia
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+
+            const contenido =
+                document.createElement(
+                    "div"
+                );
+
+
+            contenido.className =
+                "cobros-del-vendedor";
+
+
+            if (
+                cobros.length === 0
+            ) {
+
+                contenido.innerHTML = `
+
+                    <div class="sin-cobros">
+
+                        No hay cobros registrados
+                        para ${vendedor.nombre}.
+
+                    </div>
+
+                `;
+
+            } else {
+
+                cobros.forEach(
+                    cobro => {
+
+                        const producto =
+                            productos.find(
+                                item =>
+                                    item.id ===
+                                    cobro.productoId
+                            );
+
+
+                        const item =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        item.className =
+                            "cobro-item";
+
+
+                        const info =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        info.className =
+                            "cobro-info";
+
+
+                        info.innerHTML = `
+
+                            <strong>
+
+                                ${
+                                    producto
+                                        ? producto.nombre
+                                        : "Producto eliminado"
+                                }
+
+                            </strong>
+
+
+                            <small>
+
+                                Llevó:
+                                ${formatearNumero(
+                                    cobro.llevada
+                                )}
+
+                                |
+
+                                Sobró:
+                                ${formatearNumero(
+                                    cobro.sobrante
+                                )}
+
+                                |
+
+                                Vendió:
+                                ${formatearNumero(
+                                    cobro.vendido
+                                )}
+
+                                <br>
+
+                                Total:
+                                ${formatearPesos(
+                                    cobro.dinero
+                                )}
+
+                                |
+
+                                Ganancia:
+                                ${formatearPesos(
+                                    cobro.ganancia
+                                )}
+
+                            </small>
+
+                        `;
+
+
+                        const boton =
+                            document.createElement(
+                                "button"
+                            );
+
+
+                        boton.className =
+                            "btn-eliminar";
+
+
+                        boton.textContent =
+                            "Eliminar";
+
+
+                        boton.addEventListener(
+                            "click",
+                            function() {
+
+                                eliminarCobro(
+                                    cobro.id
+                                );
+
+                            }
+                        );
+
+
+                        item.appendChild(
+                            info
+                        );
+
+
+                        item.appendChild(
+                            boton
+                        );
+
+
+                        contenido.appendChild(
+                            item
+                        );
+
+                    }
+                );
+
+            }
+
+
+            bloque.appendChild(
+                encabezado
+            );
+
+
+            bloque.appendChild(
+                contenido
+            );
+
+
+            contenedor.appendChild(
+                bloque
+            );
+
+        }
+    );
+
+}
+
+
+function eliminarCobro(id) {
+
+    const cobro =
+        cobrosDia.find(
+            item =>
+                item.id === id
+        );
+
+
+    if (!cobro) {
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "¿Eliminar este cobro y su registro del historial?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    cobrosDia =
+        cobrosDia.filter(
+            item =>
+                item.id !== id
+        );
+
+
+    historialMercaderia =
+        historialMercaderia.filter(
+            item =>
+                item.id !== id
+        );
+
+
+    guardarCobrosDelDia();
+
+    guardarHistorial();
+
+    renderCobrosPorVendedor();
+
+    renderHistorialPorVendedor();
+
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+function guardarHistorial() {
+
+    localStorage.setItem(
+
+        STORAGE_HISTORIAL,
+
+        JSON.stringify(
+            historialMercaderia
+        )
+
+    );
+
+}
+
+
+/* =========================================================
+   RECUPERAR HISTORIAL ANTERIOR
+========================================================= */
+
+function cargarHistorial() {
+
+    let guardado =
+        localStorage.getItem(
+            STORAGE_HISTORIAL
+        );
+
+
+    const versionesAnteriores = [
+
+        "historial_mercaderia_ganancias_v6",
+
+        "historial_mercaderia_completo_v5",
+
+        "historial_mercaderia_completo_v4",
+
+        "historial_mercaderia_completo_v3",
+
+        "historial_mercaderia_completo_v2"
+
+    ];
+
+
+    if (!guardado) {
+
+        for (
+            const clave of versionesAnteriores
+        ) {
+
+            const encontrado =
+                localStorage.getItem(
+                    clave
+                );
+
+
+            if (
+                encontrado
+            ) {
+
+                guardado =
+                    encontrado;
+
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    if (!guardado) {
+
+        historialMercaderia = [];
+
+        return;
+
+    }
+
+
+    try {
+
+        const datos =
+            JSON.parse(
+                guardado
+            );
+
+
+        historialMercaderia =
+            Array.isArray(
+                datos
+            )
+                ? datos
+                : [];
+
+
+        /* =================================================
+           ASEGURAR DINERO Y GANANCIA
+        ================================================= */
+
+        historialMercaderia =
+            historialMercaderia.map(
+                registro => {
+
+                    let dinero =
+                        Number(
+                            registro.dinero
+                        ) || 0;
+
+
+                    let ganancia =
+                        Number(
+                            registro.ganancia
+                        ) || 0;
+
+
+                    if (
+                        dinero === 0 &&
+                        ganancia === 0
+                    ) {
+
+                        const cobro =
+                            buscarCobroHistoricoPorId(
+                                registro.id
+                            );
+
+
+                        if (
+                            cobro
+                        ) {
+
+                            dinero =
+                                Number(
+                                    cobro.dinero
+                                ) || 0;
+
+
+                            ganancia =
+                                Number(
+                                    cobro.ganancia
+                                ) || 0;
+
+                        }
+
+                    }
+
+
+                    return {
+
+                        ...registro,
+
+                        dinero:
+                            dinero,
+
+                        ganancia:
+                            ganancia
+
+                    };
+
+                }
+            );
+
+
+        guardarHistorial();
+
+    } catch (error) {
+
+        historialMercaderia = [];
+
+    }
+
+}
+
+
+/* =========================================================
+   BUSCAR COBRO EN CUALQUIER FECHA
+========================================================= */
+
+function buscarCobroHistoricoPorId(id) {
+
+    for (
+        let i = 0;
+        i < localStorage.length;
+        i++
+    ) {
+
+        const clave =
+            localStorage.key(i);
+
+
+        if (
+            !clave
+        ) {
+
+            continue;
+
+        }
+
+
+        if (
+            clave.startsWith(
+                STORAGE_COBROS + "_"
+            )
+        ) {
+
+            try {
+
+                const datos =
+                    JSON.parse(
+                        localStorage.getItem(
+                            clave
+                        )
+                    );
+
+
+                if (
+                    Array.isArray(
+                        datos
+                    )
+                ) {
+
+                    const encontrado =
+                        datos.find(
+                            cobro =>
+                                cobro.id ===
+                                id
+                        );
+
+
+                    if (
+                        encontrado
+                    ) {
+
+                        return encontrado;
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                continue;
+
+            }
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   RENDER HISTORIAL
+========================================================= */
+
+function renderHistorialPorVendedor() {
+
+    const contenedor =
+        document.getElementById(
+            "historialPorVendedor"
+        );
+
+
+    const totalTexto =
+        document.getElementById(
+            "historialTotal"
+        );
+
+
+    const totalVendidoElemento =
+        document.getElementById(
+            "historialVendidoTotal"
+        );
+
+
+    const totalDineroElemento =
+        document.getElementById(
+            "historialDineroTotal"
+        );
+
+
+    const totalGananciaElemento =
+        document.getElementById(
+            "historialGananciaTotal"
+        );
+
+
+    contenedor.innerHTML = "";
+
+
+    /* =================================================
+       TOTALES GENERALES
+       SUMAMOS LAS GANANCIAS DE TODOS LOS VENDEDORES
+    ================================================= */
+
+    let totalVendidoGeneral = 0;
+
+    let totalDineroGeneral = 0;
+
+    let totalGananciaGeneral = 0;
+
+
+    historialMercaderia.forEach(
+        registro => {
+
+            totalVendidoGeneral +=
+                Number(
+                    registro.vendido
+                ) || 0;
+
+
+            totalDineroGeneral +=
+                Number(
+                    registro.dinero
+                ) || 0;
+
+
+            totalGananciaGeneral +=
+                Number(
+                    registro.ganancia
+                ) || 0;
+
+        }
+    );
+
+
+    /* ==============================================
+       MOSTRAR TOTALES GENERALES
+    ============================================== */
+
+    totalVendidoElemento.textContent =
+        formatearNumero(
+            totalVendidoGeneral
+        );
+
+
+    totalDineroElemento.textContent =
+        formatearPesos(
+            totalDineroGeneral
+        );
+
+
+    totalGananciaElemento.textContent =
+        formatearPesos(
+            totalGananciaGeneral
+        );
+
+
+    /* =================================================
+       CREAR UN HISTORIAL PARA CADA VENDEDOR
+    ================================================= */
+
+    vendedores.forEach(
+        vendedor => {
+
+            const registros =
+                historialMercaderia
+                    .filter(
+                        registro =>
+                            registro.vendedorId ===
+                            vendedor.id
+                    )
+                    .reverse();
+
+
+            let mercaderiaVendida =
+                0;
+
+
+            let dineroVendedor =
+                0;
+
+
+            let gananciaVendedor =
+                0;
+
+
+            /* ==========================================
+               SUMAR TODAS LAS GANANCIAS DE ESTE VENDEDOR
+            ========================================== */
+
+            registros.forEach(
+                registro => {
+
+                    mercaderiaVendida +=
+                        Number(
+                            registro.vendido
+                        ) || 0;
+
+
+                    dineroVendedor +=
+                        Number(
+                            registro.dinero
+                        ) || 0;
+
+
+                    gananciaVendedor +=
+                        Number(
+                            registro.ganancia
+                        ) || 0;
+
+                }
+            );
+
+
+            const bloque =
+                document.createElement(
+                    "div"
+                );
+
+
+            bloque.className =
+                "historial-vendedor";
+
+
+            /* ==========================================
+               CABECERA VENDEDOR
+            ========================================== */
+
+            const titulo =
+                document.createElement(
+                    "div"
+                );
+
+
+            titulo.className =
+                "historial-vendedor-titulo";
+
+
+            titulo.innerHTML = `
+
+                <h3>
+                    ${vendedor.nombre}
+                </h3>
+
+
+                <div class="resumen-vendedor">
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Mercadería vendida
+                        </span>
+
+                        <strong>
+                            ${formatearNumero(
+                                mercaderiaVendida
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Plata total
+                        </span>
+
+                        <strong>
+                            ${formatearPesos(
+                                dineroVendedor
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="resumen-vendedor-card">
+
+                        <span>
+                            Ganancia total
+                        </span>
+
+                        <strong>
+                            ${formatearPesos(
+                                gananciaVendedor
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            `;
+
+
+            const contenido =
+                document.createElement(
+                    "div"
+                );
+
+
+            contenido.className =
+                "historial-vendedor-contenido";
+
+
+            /* ==========================================
+               SIN REGISTROS
+            ========================================== */
+
+            if (
+                registros.length === 0
+            ) {
+
+                contenido.innerHTML = `
+
+                    <div class="sin-cobros">
+
+                        No hay mercadería registrada
+                        para ${vendedor.nombre}.
+
+                    </div>
+
+                `;
+
+            } else {
+
+
+                /* ======================================
+                   TABLA
+                ====================================== */
+
+                const tablaContenedor =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                tablaContenedor.className =
+                    "tabla-contenedor";
+
+
+                const tabla =
+                    document.createElement(
+                        "table"
+                    );
+
+
+                tabla.className =
+                    "tabla-historial";
+
+
+                const thead =
+                    document.createElement(
+                        "thead"
+                    );
+
+
+                thead.innerHTML = `
+
+                    <tr>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Mercadería
+                        </th>
+
+                        <th>
+                            Llevó
+                        </th>
+
+                        <th>
+                            Vendió
+                        </th>
+
+                        <th>
+                            Plata
+                        </th>
+
+                        <th>
+                            Ganancia
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+                `;
+
+
+                const tbody =
+                    document.createElement(
+                        "tbody"
+                    );
+
+
+                registros.forEach(
+                    registro => {
+
+                        const tr =
+                            document.createElement(
+                                "tr"
+                            );
+
+
+                        const tdFecha =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdFecha.textContent =
+                            fechaArgentina(
+                                registro.fecha
+                            );
+
+
+                        const tdProducto =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdProducto.textContent =
+                            registro.producto;
+
+
+                        const tdLlevada =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdLlevada.textContent =
+                            formatearNumero(
+                                registro.llevada
+                            );
+
+
+                        const tdVendida =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdVendida.textContent =
+                            formatearNumero(
+                                registro.vendido
+                            );
+
+
+                        const tdDinero =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdDinero.textContent =
+                            formatearPesos(
+                                registro.dinero
+                            );
+
+
+                        const tdGanancia =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        tdGanancia.textContent =
+                            formatearPesos(
+                                registro.ganancia
+                            );
+
+
+                        const tdAccion =
+                            document.createElement(
+                                "td"
+                            );
+
+
+                        const boton =
+                            document.createElement(
+                                "button"
+                            );
+
+
+                        boton.className =
+                            "btn-eliminar";
+
+
+                        boton.textContent =
+                            "Eliminar";
+
+
+                        boton.addEventListener(
+                            "click",
+                            function() {
+
+                                eliminarRegistroHistorial(
+                                    registro.id
+                                );
+
+                            }
+                        );
+
+
+                        tdAccion.appendChild(
+                            boton
+                        );
+
+
+                        tr.appendChild(
+                            tdFecha
+                        );
+
+
+                        tr.appendChild(
+                            tdProducto
+                        );
+
+
+                        tr.appendChild(
+                            tdLlevada
+                        );
+
+
+                        tr.appendChild(
+                            tdVendida
+                        );
+
+
+                        tr.appendChild(
+                            tdDinero
+                        );
+
+
+                        tr.appendChild(
+                            tdGanancia
+                        );
+
+
+                        tr.appendChild(
+                            tdAccion
+                        );
+
+
+                        tbody.appendChild(
+                            tr
+                        );
+
+                    }
+                );
+
+
+                tabla.appendChild(
+                    thead
+                );
+
+
+                tabla.appendChild(
+                    tbody
+                );
+
+
+                tablaContenedor.appendChild(
+                    tabla
+                );
+
+
+                contenido.appendChild(
+                    tablaContenedor
+                );
+
+            }
+
+
+            bloque.appendChild(
+                titulo
+            );
+
+
+            bloque.appendChild(
+                contenido
+            );
+
+
+            contenedor.appendChild(
+                bloque
+            );
+
+        }
+    );
+
+
+    /* =================================================
+       TEXTO DEL TOTAL GENERAL
+    ================================================= */
+
+    totalTexto.innerHTML = `
+
+        <strong>
+            TOTAL GENERAL
+        </strong>
+
+        <br><br>
+
+        Mercadería vendida:
+
+        <strong>
+            ${formatearNumero(
+                totalVendidoGeneral
+            )}
+        </strong>
+
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+
+        Plata total:
+
+        <strong>
+            ${formatearPesos(
+                totalDineroGeneral
+            )}
+        </strong>
+
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+
+        Ganancia total:
+
+        <strong>
+            ${formatearPesos(
+                totalGananciaGeneral
+            )}
+        </strong>
+
+    `;
+
+}
+
+
+/* =========================================================
+   ELIMINAR REGISTRO DEL HISTORIAL
+========================================================= */
+
+function eliminarRegistroHistorial(id) {
+
+    if (
+        !confirm(
+            "¿Eliminar este registro del historial?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    historialMercaderia =
+        historialMercaderia.filter(
+            registro =>
+                registro.id !== id
+        );
+
+
+    cobrosDia =
+        cobrosDia.filter(
+            cobro =>
+                cobro.id !== id
+        );
+
+
+    guardarHistorial();
+
+    guardarCobrosDelDia();
+
+    renderHistorialPorVendedor();
+
+    renderCobrosPorVendedor();
+
+}
+
+
+/* =========================================================
+   BORRAR HISTORIAL
+========================================================= */
+
+function borrarHistorial() {
+
+    if (
+        historialMercaderia.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !confirm(
+            "¿Seguro que querés borrar TODO el historial de mercadería?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    historialMercaderia = [];
+
+
+    localStorage.removeItem(
+        STORAGE_HISTORIAL
+    );
+
+
+    localStorage.removeItem(
+        "historial_mercaderia_ganancias_v6"
+    );
+
+
+    localStorage.removeItem(
+        "historial_mercaderia_completo_v5"
+    );
+
+
+    localStorage.removeItem(
+        "historial_mercaderia_completo_v4"
+    );
+
+
+    localStorage.removeItem(
+        "historial_mercaderia_completo_v3"
+    );
+
+
+    localStorage.removeItem(
+        "historial_mercaderia_completo_v2"
+    );
+
+
+    renderHistorialPorVendedor();
+
+}
+
+
+/* =========================================================
+   BORRAR DATOS DEL DÍA
+========================================================= */
+
+function borrarDatosDelDia() {
+
+    if (
+        !confirm(
+            "¿Querés borrar las ventas y los cobros de esta fecha?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    localStorage.removeItem(
+        STORAGE_VENTAS +
+        fecha
+    );
+
+
+    localStorage.removeItem(
+        STORAGE_COBROS +
+        "_" +
+        fecha
+    );
+
+
+    ventasDia =
+        crearVentasVacias();
+
+
+    cobrosDia = [];
+
+
+    renderTablaVentas();
+
+    renderCobrosPorVendedor();
+
+}
+
+
+/* =========================================================
+   GUARDAR TODO
+========================================================= */
+
+function guardarTodo() {
+
+    guardarCatalogos();
+
+    guardarVentasDelDia();
+
+    guardarCobrosDelDia();
+
+    guardarHistorial();
+
+
+    alert(
+        "Datos guardados correctamente."
+    );
+
+}
+
+
+/* =========================================================
+   CAMBIO DE FECHA
+========================================================= */
+
+function cargarDatosFecha() {
+
+    cargarVentasDelDia();
+
+    cargarCobrosDelDia();
+
+    renderTablaVentas();
+
+    renderCobrosPorVendedor();
+
+}
+
+
+/* =========================================================
+   =========================================================
+   CALCULADORA
+   TOTALMENTE INDEPENDIENTE DEL COBRO
+   =========================================================
+========================================================= */
+
+let calcExpresion = "";
+
+let calcResultadoMostrado =
+    false;
+
+
+/* =========================================================
+   FORMATEAR NÚMERO EN LA PANTALLA
+========================================================= */
+
+function calcFormatearNumeroPantalla(
+    texto
+) {
+
+    if (
+        texto === "" ||
+        texto === "-" ||
+        texto === "Error"
+    ) {
+
+        return texto;
+
+    }
+
+
+    const tieneMenos =
+        texto.startsWith(
+            "-"
+        );
+
+
+    let trabajo =
+        tieneMenos
+            ? texto.substring(1)
+            : texto;
+
+
+    let decimal = "";
+
+
+    if (
+        trabajo.includes(".")
+    ) {
+
+        const partes =
+            trabajo.split(".");
+
+
+        trabajo =
+            partes[0];
+
+
+        decimal =
+            "." +
+            partes
+                .slice(1)
+                .join("");
+
+    }
+
+
+    const numero =
+        Number(
+            trabajo
+        );
+
+
+    if (
+        isNaN(numero)
+    ) {
+
+        return texto;
+
+    }
+
+
+    let resultado =
+        Math.abs(numero)
+            .toLocaleString(
+                "es-AR"
+            );
+
+
+    if (
+        decimal !== ""
+    ) {
+
+        resultado +=
+            decimal;
+
+    }
+
+
+    if (
+        tieneMenos
+    ) {
+
+        resultado =
+            "-" +
+            resultado;
+
+    }
+
+
+    return resultado;
+
+}
+
+
+/* =========================================================
+   FORMATEAR EXPRESIÓN
+========================================================= */
+
+function calcFormatearExpresion() {
+
+    if (
+        calcExpresion === "" ||
+        calcExpresion === "Error"
+    ) {
+
+        return calcExpresion;
+
+    }
+
+
+    const partes =
+        calcExpresion.split(
+            /([+\−×÷%])/
+        );
+
+
+    return partes
+        .map(
+            parte => {
+
+                if (
+                    [
+                        "+",
+                        "−",
+                        "×",
+                        "÷",
+                        "%"
+                    ].includes(
+                        parte
+                    )
+                ) {
+
+                    return (
+                        " " +
+                        parte +
+                        " "
+                    );
+
+                }
+
+
+                if (
+                    parte === ""
+                ) {
+
+                    return "";
+
+                }
+
+
+                return calcFormatearNumeroPantalla(
+                    parte
+                );
+
+            }
+        )
+        .join("");
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR PANTALLA
+========================================================= */
+
+function calcActualizarPantalla() {
+
+    const pantalla =
+        document.getElementById(
+            "calculadoraDisplay"
+        );
+
+
+    if (!pantalla) {
+
+        return;
+
+    }
+
+
+    pantalla.value =
+        calcFormatearExpresion() ||
+        "0";
+
+}
+
+
+/* =========================================================
+   ULTIMO NUMERO
+========================================================= */
+
+function calcUltimoNumero() {
+
+    const partes =
+        calcExpresion.split(
+            /[+\−×÷%]/
+        );
+
+
+    return (
+        partes[
+            partes.length - 1
+        ] || ""
+    );
+
+}
+
+
+/* =========================================================
+   SABER SI ES OPERADOR
+========================================================= */
+
+function calcEsOperador(
+    caracter
+) {
+
+    return [
+
+        "+",
+        "−",
+        "×",
+        "÷",
+        "%"
+
+    ].includes(
+        caracter
+    );
+
+}
+
+
+/* =========================================================
+   NUMEROS
+========================================================= */
+
+function calcNumero(
+    numero
+) {
+
+    if (
+        calcExpresion ===
+        "Error"
+    ) {
+
+        calcExpresion =
+            "";
+
+    }
+
+
+    if (
+        calcResultadoMostrado
+    ) {
+
+        calcExpresion =
+            "";
+
+        calcResultadoMostrado =
+            false;
+
+    }
+
+
+    const ultimoNumero =
+        calcUltimoNumero();
+
+
+    if (
+        numero === "." &&
+        ultimoNumero.includes(
+            "."
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        numero === "0" &&
+        ultimoNumero === "0"
+    ) {
+
+        return;
+
+    }
+
+
+    calcExpresion +=
+        numero;
+
+
+    calcActualizarPantalla();
+
+}
+
+
+/* =========================================================
+   OPERADORES
+========================================================= */
+
+function calcOperacion(
+    operador
+) {
+
+    if (
+        calcExpresion ===
+        "Error"
+    ) {
+
+        calcExpresion =
+            "";
+
+    }
+
+
+    if (
+        calcExpresion === ""
+    ) {
+
+        return;
+
+    }
+
+
+    calcResultadoMostrado =
+        false;
+
+
+    const ultimoCaracter =
+        calcExpresion[
+            calcExpresion.length - 1
+        ];
+
+
+    if (
+        calcEsOperador(
+            ultimoCaracter
+        )
+    ) {
+
+        calcExpresion =
+            calcExpresion.slice(
+                0,
+                -1
+            );
+
+    }
+
+
+    calcExpresion +=
+        operador;
+
+
+    calcActualizarPantalla();
+
+}
+
+
+/* =========================================================
+   LIMPIAR
+========================================================= */
+
+function calcLimpiar() {
+
+    calcExpresion =
+        "";
+
+    calcResultadoMostrado =
+        false;
+
+    calcActualizarPantalla();
+
+}
+
+
+/* =========================================================
+   BORRAR
+========================================================= */
+
+function calcBorrar() {
+
+    if (
+        calcExpresion ===
+        "Error"
+    ) {
+
+        calcLimpiar();
+
+        return;
+
+    }
+
+
+    calcExpresion =
+        calcExpresion.slice(
+            0,
+            -1
+        );
+
+
+    calcResultadoMostrado =
+        false;
+
+
+    calcActualizarPantalla();
+
+}
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+function calcResultado() {
+
+    if (
+        calcExpresion === "" ||
+        calcExpresion === "Error"
+    ) {
+
+        return;
+
+    }
+
+
+    let expresion =
+        calcExpresion
+            .replaceAll(
+                "×",
+                "*"
+            )
+            .replaceAll(
+                "÷",
+                "/"
+            )
+            .replaceAll(
+                "−",
+                "-"
+            );
+
+
+    const ultimo =
+        expresion[
+            expresion.length - 1
+        ];
+
+
+    if (
+        [
+            "+",
+            "-",
+            "*",
+            "/",
+            "%"
+        ].includes(
+            ultimo
+        )
+    ) {
+
+        expresion =
+            expresion.slice(
+                0,
+                -1
+            );
+
+    }
+
+
+    if (
+        expresion === ""
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !/^[0-9+\-*/%().\s]+$/.test(
+            expresion
+        )
+    ) {
+
+        calcExpresion =
+            "Error";
+
+
+        calcResultadoMostrado =
+            true;
+
+
+        calcActualizarPantalla();
+
+        return;
+
+    }
+
+
+    try {
+
+        const resultado =
+            Function(
+
+                '"use strict"; return (' +
+                expresion +
+                ');'
+
+            )();
+
+
+        if (
+            typeof resultado !==
+                "number" ||
+            !isFinite(resultado)
+        ) {
+
+            throw new Error();
+
+        }
+
+
+        if (
+            Number.isInteger(
+                resultado
+            )
+        ) {
+
+            calcExpresion =
+                String(
+                    resultado
+                );
+
+        } else {
+
+            calcExpresion =
+                String(
+                    parseFloat(
+                        resultado.toFixed(
+                            8
+                        )
+                    )
+                );
+
+        }
+
+
+        calcResultadoMostrado =
+            true;
+
+
+        calcActualizarPantalla();
+
+    } catch (error) {
+
+        calcExpresion =
+            "Error";
+
+
+        calcResultadoMostrado =
+            true;
+
+
+        calcActualizarPantalla();
+
+    }
+
+}
+
+
+/* =========================================================
+   TECLADO CALCULADORA
+   SOLO FUNCIONA DENTRO DE SU PANEL
+========================================================= */
+
+const panelCalculadora =
+    document.getElementById(
+        "panelCalculadora"
+    );
+
+
+panelCalculadora.addEventListener(
+    "keydown",
+    function(event) {
+
+        const tecla =
+            event.key;
+
+
+        if (
+            tecla >= "0" &&
+            tecla <= "9"
+        ) {
+
+            calcNumero(
+                tecla
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "." ||
+            tecla === ","
+        ) {
+
+            calcNumero(
+                "."
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "+"
+        ) {
+
+            calcOperacion(
+                "+"
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "-"
+        ) {
+
+            calcOperacion(
+                "−"
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "*"
+        ) {
+
+            calcOperacion(
+                "×"
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "/"
+        ) {
+
+            calcOperacion(
+                "÷"
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "%"
+        ) {
+
+            calcOperacion(
+                "%"
+            );
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "Enter" ||
+            tecla === "="
+        ) {
+
+            calcResultado();
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "Backspace"
+        ) {
+
+            calcBorrar();
+
+
+            event.preventDefault();
+
+            return;
+
+        }
+
+
+        if (
+            tecla === "Escape"
+        ) {
+
+            calcLimpiar();
+
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   EVENTOS DE COBRO
+========================================================= */
+
+document
+    .getElementById(
+        "cobroProducto"
+    )
+    .addEventListener(
+        "change",
+        actualizarDatosCobroProducto
+    );
+
+
+document
+    .getElementById(
+        "cantidadLlevada"
+    )
+    .addEventListener(
+        "input",
+        calcularCobro
+    );
+
+
+document
+    .getElementById(
+        "cantidadSobrante"
+    )
+    .addEventListener(
+        "input",
+        calcularCobro
+    );
+
+
+document
+    .getElementById(
+        "precioVenta"
+    )
+    .addEventListener(
+        "input",
+        calcularCobro
+    );
+
+
+document
+    .getElementById(
+        "gananciaUnidad"
+    )
+    .addEventListener(
+        "input",
+        calcularCobro
+    );
+
+
+document
+    .getElementById(
+        "precioVenta"
+    )
+    .addEventListener(
+        "blur",
+        function() {
+
+            this.value =
+                formatearPesos(
+                    convertirPrecio(
+                        this.value
+                    )
+                );
+
+
+            calcularCobro();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "gananciaUnidad"
+    )
+    .addEventListener(
+        "blur",
+        function() {
+
+            this.value =
+                formatearPesos(
+                    convertirPrecio(
+                        this.value
+                    )
+                );
+
+
+            calcularCobro();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "fecha"
+    )
+    .addEventListener(
+        "change",
+        cargarDatosFecha
+    );
+
+
+/* =========================================================
+   INICIAR
+========================================================= */
+
+function iniciar() {
+
+    document.getElementById(
+        "fecha"
+    ).value =
+        obtenerFechaHoy();
+
+
+    cargarCatalogos();
+
+    cargarHistorial();
+
+    cargarDatosFecha();
+
+    renderPrecios();
+
+    renderPreciosReventa();
+
+    renderCobroSelectores();
+
+    renderCobrosPorVendedor();
+
+    renderHistorialPorVendedor();
+
+    calcActualizarPantalla();
+
+    calcularCobro();
+
+}
+
+
+iniciar();
+
+
+</script>
+
+
+</body>
+
+</html>
