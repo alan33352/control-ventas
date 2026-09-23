@@ -2065,8 +2065,7 @@
 
     function cambiarPrecioProducto(
         productoId,
-        valor,
-        formatear = true
+        valor
     ) {
 
         const producto =
@@ -2087,10 +2086,9 @@
 
         guardarProductos();
 
-        if (formatear) {
-            const input = document.querySelector(`.precio-input[data-id="${productoId}"][data-tipo="precio"]`);
-            if (input) input.value = String(producto.precio);
-        }
+        renderPrecios();
+
+        renderReventa();
 
         actualizarCobroAutomatico();
     }
@@ -2098,8 +2096,7 @@
 
     function cambiarGananciaProducto(
         productoId,
-        valor,
-        formatear = true
+        valor
     ) {
 
         const producto =
@@ -2120,10 +2117,7 @@
 
         guardarProductos();
 
-        if (formatear) {
-            const input = document.querySelector(`.ganancia-input[data-id="${productoId}"][data-tipo="ganancia"]`);
-            if (input) input.value = String(producto.ganancia);
-        }
+        renderPrecios();
 
         actualizarCobroAutomatico();
     }
@@ -3674,8 +3668,10 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="precio-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.precio)}"
@@ -3689,8 +3685,10 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="ganancia-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.ganancia)}"
@@ -3724,29 +3722,20 @@
 
 
                 inputPrecio.addEventListener("input", function() {
-                    cambiarPrecioProducto(producto.id, this.value, false);
+                    const p = productos.find(x => x.id === producto.id);
+                    if (p) { p.precio = limpiarNumero(this.value); guardarProductos(); }
                 });
-
                 inputPrecio.addEventListener("blur", function() {
-                    cambiarPrecioProducto(producto.id, this.value, true);
+                    cambiarPrecioProducto(producto.id, this.value);
                 });
 
                 inputGanancia.addEventListener("input", function() {
-                    cambiarGananciaProducto(producto.id, this.value, false);
+                    const p = productos.find(x => x.id === producto.id);
+                    if (p) { p.ganancia = limpiarNumero(this.value); guardarProductos(); }
                 });
-
                 inputGanancia.addEventListener("blur", function() {
-                    cambiarGananciaProducto(producto.id, this.value, true);
+                    cambiarGananciaProducto(producto.id, this.value);
                 });
-
-                [inputPrecio, inputGanancia].forEach(input => {
-                    input.addEventListener("keydown", function(e) {
-                        if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
-                            e.preventDefault();
-                        }
-                    });
-                });
-
 
                 tbody.appendChild(
                     tr
@@ -3808,8 +3797,10 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="precio-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${tieneReventa ? numeroArgentino(valor) : "0"}"
