@@ -456,6 +456,26 @@
             font-weight: 700;
         }
 
+        /* Campos de precio y ganancia: editables también con táctil */
+        .precio-input,
+        .ganancia-input {
+            -webkit-appearance: none;
+            appearance: none;
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-touch-callout: default;
+            touch-action: manipulation;
+            pointer-events: auto;
+            cursor: text;
+        }
+
+        .precio-input:focus,
+        .ganancia-input:focus {
+            outline: 2px solid #5f765f;
+            outline-offset: 1px;
+            background: #fffef5;
+        }
+
         .producto-activo {
             display: inline-flex;
             padding: 5px 8px;
@@ -1746,8 +1766,8 @@
         {
             id: "donas",
             nombre: "Donas",
-            precio: 0,
-            ganancia: 0
+            precio: 2000,
+            ganancia: 200
         }
 
     ];
@@ -1859,10 +1879,10 @@
                 "Donas",
 
             precio:
-                0,
+                2000,
 
             ganancia:
-                0
+                200
 
         });
     }
@@ -3687,30 +3707,26 @@
                     );
 
 
-                inputPrecio.addEventListener(
-                    "change",
-                    function() {
+                // change + blur funcionan mejor en celular y computadora.
+                const guardarPrecio = function() {
+                    cambiarPrecioProducto(
+                        producto.id,
+                        this.value
+                    );
+                };
 
-                        cambiarPrecioProducto(
-                            producto.id,
-                            this.value
-                        );
+                const guardarGanancia = function() {
+                    cambiarGananciaProducto(
+                        producto.id,
+                        this.value
+                    );
+                };
 
-                    }
-                );
+                inputPrecio.addEventListener("change", guardarPrecio);
+                inputPrecio.addEventListener("blur", guardarPrecio);
 
-
-                inputGanancia.addEventListener(
-                    "change",
-                    function() {
-
-                        cambiarGananciaProducto(
-                            producto.id,
-                            this.value
-                        );
-
-                    }
-                );
+                inputGanancia.addEventListener("change", guardarGanancia);
+                inputGanancia.addEventListener("blur", guardarGanancia);
 
 
                 tbody.appendChild(
