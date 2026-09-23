@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Control de Ventas</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Control de Ventas
+    </title>
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -552,10 +561,6 @@
             text-align: center;
         }
 
-        /* =====================================================
-           IMPORTANTE PARA CELULAR
-        ===================================================== */
-
         #cobroPrecio,
         #cobroGananciaUnidad {
             -webkit-user-select: text;
@@ -578,6 +583,7 @@
             .paneles-abajo {
                 grid-template-columns: 1fr;
             }
+
         }
 
         @media (max-width: 700px) {
@@ -625,9 +631,13 @@
                 border: 2px solid #2563eb;
                 background: white;
             }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
@@ -638,6 +648,7 @@
         <div class="encabezado-superior">
 
             <div>
+
                 <div class="titulo-principal">
                     Control de Ventas
                 </div>
@@ -645,7 +656,9 @@
                 <div class="subtitulo">
                     Control diario de mercadería, vendedores, cobros y ganancias.
                 </div>
+
             </div>
+
 
             <div class="selector-fecha">
 
@@ -661,6 +674,7 @@
             </div>
 
         </div>
+
 
         <div class="barra-botones">
 
@@ -743,9 +757,12 @@
             </h2>
 
             <div class="ayuda-automatica">
+
                 La cantidad llevada y la ganancia por unidad se cargan automáticamente.
                 En el caso de Donas podés modificar el precio y la ganancia directamente.
+
             </div>
+
 
             <div class="form-cobro">
 
@@ -823,8 +840,6 @@
                 </div>
 
 
-                <!-- PRECIO DE DONAS EDITABLE -->
-
                 <div
                     class="campo campo-automatico"
                     id="campoCobroPrecio"
@@ -845,8 +860,6 @@
 
                 </div>
 
-
-                <!-- GANANCIA DE DONAS EDITABLE -->
 
                 <div
                     class="campo campo-automatico"
@@ -930,6 +943,7 @@
             <h2>
                 Calculadora
             </h2>
+
 
             <div class="calculadora-display">
 
@@ -1180,9 +1194,16 @@
             Historial de mercadería
         </h2>
 
-        <p style="color:#6b7280;font-size:13px;margin-bottom:15px;">
+        <p
+            style="
+                color:#6b7280;
+                font-size:13px;
+                margin-bottom:15px;
+            "
+        >
             Historial separado por vendedor con mercadería llevada, vendida, dinero y ganancias.
         </p>
+
 
         <div id="historialPorVendedor">
         </div>
@@ -1251,6 +1272,7 @@
 
 <script>
 
+
     /* =========================================================
        LOCALSTORAGE
     ========================================================= */
@@ -1277,7 +1299,8 @@
 
     function obtenerFechaActual() {
 
-        const ahora = new Date();
+        const ahora =
+            new Date();
 
         const año =
             ahora.getFullYear();
@@ -1512,7 +1535,10 @@
         }
 
         const numero =
-            parseInt(seleccion,10);
+            parseInt(
+                seleccion,
+                10
+            );
 
         if (
             isNaN(numero) ||
@@ -1520,7 +1546,9 @@
             numero > vendedores.length
         ) {
 
-            alert("Número inválido.");
+            alert(
+                "Número inválido."
+            );
 
             return;
         }
@@ -1588,9 +1616,12 @@
             obtenerFechaSeleccionada();
 
         const cobros =
-            obtenerCobrosFecha(fecha);
+            obtenerCobrosFecha(
+                fecha
+            );
 
-        let cambioCobro = false;
+        let cambioCobro =
+            false;
 
         cobros.forEach(
             cobro => {
@@ -1746,27 +1777,103 @@
     }
 
 
+    /*
+     * ========================================================
+     * CORRECCIÓN DE DONAS DUPLICADAS
+     *
+     * Si ya había quedado guardada más de una Donas,
+     * dejamos solamente la primera.
+     *
+     * También detecta "Donas" aunque tenga otro ID.
+     * ========================================================
+     */
+
+    let donasEncontradas =
+        false;
+
+
+    productos =
+        productos.filter(
+            producto => {
+
+                const esDona =
+                    producto.id === "donas" ||
+                    String(
+                        producto.nombre
+                    )
+                        .trim()
+                        .toLowerCase() ===
+                        "donas";
+
+
+                if (!esDona) {
+
+                    return true;
+                }
+
+
+                if (
+                    donasEncontradas
+                ) {
+
+                    return false;
+                }
+
+
+                donasEncontradas =
+                    true;
+
+
+                /*
+                 * Normalizamos el ID para que
+                 * siempre sea "donas".
+                 */
+
+                producto.id =
+                    "donas";
+
+                producto.nombre =
+                    "Donas";
+
+
+                return true;
+            }
+        );
+
+
+    /*
+     * Si por algún motivo no existía Donas,
+     * la creamos una sola vez.
+     */
+
     if (
-        !productos.some(
-            producto =>
-                producto.id === "donas"
-        )
+        !donasEncontradas
     ) {
 
         productos.push({
 
-            id: "donas",
+            id:
+                "donas",
 
-            nombre: "Donas",
+            nombre:
+                "Donas",
 
-            precio: 0,
+            precio:
+                0,
 
-            ganancia: 0
+            ganancia:
+                0
 
         });
-
-        guardarProductos();
     }
+
+
+    /*
+     * Guardamos inmediatamente la lista
+     * ya corregida.
+     */
+
+    guardarProductos();
 
 
     function guardarProductos() {
@@ -1794,7 +1901,9 @@
                 "Precio de venta del producto:"
             );
 
-        if (precioTexto === null) {
+        if (
+            precioTexto === null
+        ) {
             return;
         }
 
@@ -1803,7 +1912,9 @@
                 "Ganancia por unidad:"
             );
 
-        if (gananciaTexto === null) {
+        if (
+            gananciaTexto === null
+        ) {
             return;
         }
 
@@ -1816,10 +1927,14 @@
                 nombre.trim(),
 
             precio:
-                limpiarNumero(precioTexto),
+                limpiarNumero(
+                    precioTexto
+                ),
 
             ganancia:
-                limpiarNumero(gananciaTexto)
+                limpiarNumero(
+                    gananciaTexto
+                )
 
         };
 
@@ -1832,7 +1947,9 @@
             return;
         }
 
-        productos.push(nuevo);
+        productos.push(
+            nuevo
+        );
 
         guardarProductos();
 
@@ -1868,12 +1985,17 @@
                 "\nEscribí el número del producto:"
             );
 
-        if (seleccion === null) {
+        if (
+            seleccion === null
+        ) {
             return;
         }
 
         const numero =
-            parseInt(seleccion,10);
+            parseInt(
+                seleccion,
+                10
+            );
 
         if (
             isNaN(numero) ||
@@ -1881,7 +2003,9 @@
             numero > productos.length
         ) {
 
-            alert("Número inválido.");
+            alert(
+                "Número inválido."
+            );
 
             return;
         }
@@ -1919,7 +2043,8 @@
         const producto =
             productos.find(
                 p =>
-                    p.id === productoId
+                    p.id ===
+                    productoId
             );
 
         if (!producto) {
@@ -1927,7 +2052,9 @@
         }
 
         producto.precio =
-            limpiarNumero(valor);
+            limpiarNumero(
+                valor
+            );
 
         guardarProductos();
 
@@ -1947,7 +2074,8 @@
         const producto =
             productos.find(
                 p =>
-                    p.id === productoId
+                    p.id ===
+                    productoId
             );
 
         if (!producto) {
@@ -1955,7 +2083,9 @@
         }
 
         producto.ganancia =
-            limpiarNumero(valor);
+            limpiarNumero(
+                valor
+            );
 
         guardarProductos();
 
@@ -1972,9 +2102,13 @@
     const reventaInicial = {
 
         "tortafrita": 1000,
+
         "sandwiches-miga": 2500,
+
         "ensalada-frutas": 2500,
+
         "bandejitas": 3000,
+
         "bollos": 1000
 
     };
@@ -2006,7 +2140,9 @@
 
         localStorage.setItem(
             KEY_REVENTA,
-            JSON.stringify(preciosReventa)
+            JSON.stringify(
+                preciosReventa
+            )
         );
     }
 
@@ -2016,8 +2152,12 @@
         valor
     ) {
 
-        preciosReventa[productoId] =
-            limpiarNumero(valor);
+        preciosReventa[
+            productoId
+        ] =
+            limpiarNumero(
+                valor
+            );
 
         guardarPreciosReventa();
     }
@@ -2041,7 +2181,9 @@
     }
 
 
-    function claveVentas(fecha) {
+    function claveVentas(
+        fecha
+    ) {
 
         return (
             "ventas_ambulantes_" +
@@ -2050,11 +2192,15 @@
     }
 
 
-    function obtenerVentasFecha(fecha) {
+    function obtenerVentasFecha(
+        fecha
+    ) {
 
         const datos =
             localStorage.getItem(
-                claveVentas(fecha)
+                claveVentas(
+                    fecha
+                )
             );
 
         if (!datos) {
@@ -2063,7 +2209,9 @@
 
         try {
 
-            return JSON.parse(datos) || {};
+            return JSON.parse(
+                datos
+            ) || {};
 
         } catch {
 
@@ -2078,8 +2226,12 @@
     ) {
 
         localStorage.setItem(
-            claveVentas(fecha),
-            JSON.stringify(datos)
+            claveVentas(
+                fecha
+            ),
+            JSON.stringify(
+                datos
+            )
         );
     }
 
@@ -2104,7 +2256,9 @@
     ) {
 
         const ventas =
-            obtenerVentasFecha(fecha);
+            obtenerVentasFecha(
+                fecha
+            );
 
         const clave =
             claveVentasCelda(
@@ -2128,7 +2282,9 @@
             obtenerFechaSeleccionada();
 
         const ventas =
-            obtenerVentasFecha(fecha);
+            obtenerVentasFecha(
+                fecha
+            );
 
         const clave =
             claveVentasCelda(
@@ -2140,7 +2296,9 @@
             Math.max(
                 0,
                 Math.floor(
-                    limpiarNumero(valor)
+                    limpiarNumero(
+                        valor
+                    )
                 )
             );
 
@@ -2162,11 +2320,15 @@
             obtenerFechaSeleccionada();
 
         guardarVendedores();
+
         guardarProductos();
+
         guardarPreciosReventa();
 
         renderVentas();
+
         renderCobrosPorVendedor();
+
         renderHistorial();
 
         alert(
@@ -2189,7 +2351,9 @@
         }
 
         localStorage.removeItem(
-            claveVentas(fecha)
+            claveVentas(
+                fecha
+            )
         );
 
         localStorage.removeItem(
@@ -2199,7 +2363,9 @@
         );
 
         renderVentas();
+
         renderCobrosPorVendedor();
+
         actualizarCobroAutomatico();
 
         alert(
@@ -2225,31 +2391,45 @@
             );
 
         encabezado.innerHTML = "";
+
         cuerpo.innerHTML = "";
 
+
         const filaHeader =
-            document.createElement("tr");
+            document.createElement(
+                "tr"
+            );
+
 
         const thProducto =
-            document.createElement("th");
+            document.createElement(
+                "th"
+            );
 
         thProducto.textContent =
             "Producto";
+
 
         filaHeader.appendChild(
             thProducto
         );
 
+
         vendedores.forEach(
             vendedor => {
 
                 const th =
-                    document.createElement("th");
+                    document.createElement(
+                        "th"
+                    );
 
                 const input =
-                    document.createElement("input");
+                    document.createElement(
+                        "input"
+                    );
 
-                input.type = "text";
+                input.type =
+                    "text";
 
                 input.className =
                     "nombre-vendedor-input";
@@ -2268,27 +2448,40 @@
                     }
                 );
 
-                th.appendChild(input);
+                th.appendChild(
+                    input
+                );
 
-                filaHeader.appendChild(th);
+                filaHeader.appendChild(
+                    th
+                );
+
             }
         );
+
 
         encabezado.appendChild(
             filaHeader
         );
 
+
         const fecha =
             obtenerFechaSeleccionada();
+
 
         productos.forEach(
             producto => {
 
                 const tr =
-                    document.createElement("tr");
+                    document.createElement(
+                        "tr"
+                    );
+
 
                 const tdProducto =
-                    document.createElement("td");
+                    document.createElement(
+                        "td"
+                    );
 
                 tdProducto.className =
                     "producto-nombre";
@@ -2296,20 +2489,27 @@
                 tdProducto.textContent =
                     producto.nombre;
 
+
                 tr.appendChild(
                     tdProducto
                 );
+
 
                 vendedores.forEach(
                     vendedor => {
 
                         const td =
-                            document.createElement("td");
+                            document.createElement(
+                                "td"
+                            );
 
                         const input =
-                            document.createElement("input");
+                            document.createElement(
+                                "input"
+                            );
 
-                        input.type = "text";
+                        input.type =
+                            "text";
 
                         input.inputMode =
                             "numeric";
@@ -2317,7 +2517,9 @@
                         input.className =
                             "cantidad-input";
 
-                        input.placeholder = "0";
+                        input.placeholder =
+                            "0";
+
 
                         const cantidad =
                             obtenerCantidadLlevada(
@@ -2326,8 +2528,10 @@
                                 producto.id
                             );
 
+
                         input.value =
                             cantidad || "";
+
 
                         input.addEventListener(
                             "input",
@@ -2341,6 +2545,7 @@
                             }
                         );
 
+
                         input.addEventListener(
                             "change",
                             function() {
@@ -2353,13 +2558,23 @@
                             }
                         );
 
-                        td.appendChild(input);
 
-                        tr.appendChild(td);
+                        td.appendChild(
+                            input
+                        );
+
+                        tr.appendChild(
+                            td
+                        );
+
                     }
                 );
 
-                cuerpo.appendChild(tr);
+
+                cuerpo.appendChild(
+                    tr
+                );
+
             }
         );
     }
@@ -2434,13 +2649,18 @@
         const productoSeleccionado =
             cobroProducto.value;
 
-        cobroVendedor.innerHTML = "";
+
+        cobroVendedor.innerHTML =
+            "";
+
 
         vendedores.forEach(
             vendedor => {
 
                 const option =
-                    document.createElement("option");
+                    document.createElement(
+                        "option"
+                    );
 
                 option.value =
                     vendedor.id;
@@ -2451,16 +2671,22 @@
                 cobroVendedor.appendChild(
                     option
                 );
+
             }
         );
 
-        cobroProducto.innerHTML = "";
+
+        cobroProducto.innerHTML =
+            "";
+
 
         productos.forEach(
             producto => {
 
                 const option =
-                    document.createElement("option");
+                    document.createElement(
+                        "option"
+                    );
 
                 option.value =
                     producto.id;
@@ -2471,8 +2697,10 @@
                 cobroProducto.appendChild(
                     option
                 );
+
             }
         );
+
 
         if (
             vendedores.some(
@@ -2493,6 +2721,7 @@
                 vendedores[0].id;
         }
 
+
         if (
             productos.some(
                 p =>
@@ -2511,6 +2740,7 @@
             cobroProducto.value =
                 productos[0].id;
         }
+
     }
 
 
@@ -2525,24 +2755,31 @@
         const productoId =
             cobroProducto.value;
 
+
         const vendedor =
             vendedores.find(
                 v =>
-                    v.id === vendedorId
+                    v.id ===
+                    vendedorId
             );
+
 
         const producto =
             productos.find(
                 p =>
-                    p.id === productoId
+                    p.id ===
+                    productoId
             );
+
 
         if (
             !vendedor ||
             !producto
         ) {
+
             return null;
         }
+
 
         const llevada =
             obtenerCantidadLlevada(
@@ -2550,6 +2787,7 @@
                 vendedorId,
                 productoId
             );
+
 
         return {
 
@@ -2568,23 +2806,21 @@
             llevada,
 
             precio:
-                Number(producto.precio) || 0,
+                Number(
+                    producto.precio
+                ) || 0,
 
             gananciaUnidad:
-                Number(producto.ganancia) || 0
+                Number(
+                    producto.ganancia
+                ) || 0
+
         };
     }
 
 
     /* =========================================================
        COBRO AUTOMÁTICO
-       
-       DONAS:
-       - Precio editable
-       - Ganancia editable
-       
-       RESTO:
-       - Automático
     ========================================================= */
 
     function actualizarCobroAutomatico() {
@@ -2592,14 +2828,27 @@
         const datos =
             obtenerDatosCobroActual();
 
+
         if (!datos) {
 
-            cobroLlevada.value = "0";
-            cobroVendido.value = "0";
-            cobroPrecio.value = "$0";
-            cobroGananciaUnidad.value = "$0";
-            cobroDinero.value = "$0";
-            cobroGanancia.value = "$0";
+            cobroLlevada.value =
+                "0";
+
+            cobroVendido.value =
+                "0";
+
+            cobroPrecio.value =
+                "$0";
+
+            cobroGananciaUnidad.value =
+                "$0";
+
+            cobroDinero.value =
+                "$0";
+
+            cobroGanancia.value =
+                "$0";
+
 
             cobroPrecio.setAttribute(
                 "readonly",
@@ -2610,6 +2859,7 @@
                 "readonly",
                 "readonly"
             );
+
 
             campoCobroPrecio.classList.add(
                 "campo-automatico"
@@ -2624,15 +2874,9 @@
 
 
         const esDona =
-            datos.productoId === "donas";
+            datos.productoId ===
+            "donas";
 
-
-        /*
-         * ESTE ES EL CAMBIO PRINCIPAL:
-         *
-         * Para Donas eliminamos readonly.
-         * Para los demás productos lo agregamos.
-         */
 
         if (esDona) {
 
@@ -2683,11 +2927,13 @@
             campoCobroGananciaUnidad.classList.add(
                 "campo-automatico"
             );
+
         }
 
 
         const llevada =
             datos.llevada;
+
 
         const sobrante =
             Math.max(
@@ -2699,15 +2945,19 @@
                 )
             );
 
+
         const vendido =
             Math.max(
                 0,
-                llevada - sobrante
+                llevada -
+                sobrante
             );
+
 
         const dinero =
             vendido *
             datos.precio;
+
 
         const ganancia =
             vendido *
@@ -2718,6 +2968,7 @@
             numeroArgentino(
                 llevada
             );
+
 
         cobroVendido.value =
             numeroArgentino(
@@ -2748,6 +2999,7 @@
                 formatoPesos(
                     datos.gananciaUnidad
                 );
+
         }
 
 
@@ -2756,10 +3008,12 @@
                 dinero
             );
 
+
         cobroGanancia.value =
             formatoPesos(
                 ganancia
             );
+
     }
 
 
@@ -2772,16 +3026,21 @@
             return;
         }
 
+
         let sobrante =
             limpiarNumero(
                 cobroSobrante.value
             );
 
+
         sobrante =
             Math.max(
                 0,
-                Math.floor(sobrante)
+                Math.floor(
+                    sobrante
+                )
             );
+
 
         if (
             sobrante >
@@ -2796,16 +3055,22 @@
             );
         }
 
+
         cobroSobrante.value =
             sobrante === 0
                 ? ""
-                : String(sobrante);
+                : String(
+                    sobrante
+                );
+
 
         actualizarCobroAutomatico();
     }
 
 
-    function claveCobrosFecha(fecha) {
+    function claveCobrosFecha(
+        fecha
+    ) {
 
         return (
             KEY_COBROS +
@@ -2815,20 +3080,28 @@
     }
 
 
-    function obtenerCobrosFecha(fecha) {
+    function obtenerCobrosFecha(
+        fecha
+    ) {
 
         const datos =
             localStorage.getItem(
-                claveCobrosFecha(fecha)
+                claveCobrosFecha(
+                    fecha
+                )
             );
+
 
         if (!datos) {
             return [];
         }
 
+
         try {
 
-            return JSON.parse(datos) || [];
+            return JSON.parse(
+                datos
+            ) || [];
 
         } catch {
 
@@ -2843,8 +3116,12 @@
     ) {
 
         localStorage.setItem(
-            claveCobrosFecha(fecha),
-            JSON.stringify(cobros)
+            claveCobrosFecha(
+                fecha
+            ),
+            JSON.stringify(
+                cobros
+            )
         );
     }
 
@@ -2853,8 +3130,10 @@
 
         validarSobrante();
 
+
         const datos =
             obtenerDatosCobroActual();
+
 
         if (!datos) {
 
@@ -2865,10 +3144,12 @@
             return;
         }
 
+
         const sobrante =
             limpiarNumero(
                 cobroSobrante.value
             );
+
 
         if (
             sobrante >
@@ -2882,24 +3163,31 @@
             return;
         }
 
+
         const vendido =
             Math.max(
                 0,
-                datos.llevada - sobrante
+                datos.llevada -
+                sobrante
             );
+
 
         const dinero =
             vendido *
             datos.precio;
 
+
         const ganancia =
             vendido *
             datos.gananciaUnidad;
 
+
         const cobro = {
 
             id:
-                generarId("cobro"),
+                generarId(
+                    "cobro"
+                ),
 
             fecha:
                 datos.fecha,
@@ -2932,6 +3220,7 @@
             dinero,
 
             ganancia
+
         };
 
 
@@ -2940,7 +3229,11 @@
                 datos.fecha
             );
 
-        cobros.push(cobro);
+
+        cobros.push(
+            cobro
+        );
+
 
         guardarCobrosFecha(
             datos.fecha,
@@ -2950,6 +3243,7 @@
 
         const historial =
             obtenerHistorial();
+
 
         historial.push({
 
@@ -2988,18 +3282,22 @@
 
         });
 
+
         guardarHistorial(
             historial
         );
 
 
-        cobroSobrante.value = "";
+        cobroSobrante.value =
+            "";
+
 
         actualizarCobroAutomatico();
 
         renderCobrosPorVendedor();
 
         renderHistorial();
+
     }
 
 
@@ -3016,14 +3314,20 @@
             return;
         }
 
+
         let cobros =
-            obtenerCobrosFecha(fecha);
+            obtenerCobrosFecha(
+                fecha
+            );
+
 
         cobros =
             cobros.filter(
                 cobro =>
-                    cobro.id !== cobroId
+                    cobro.id !==
+                    cobroId
             );
+
 
         guardarCobrosFecha(
             fecha,
@@ -3034,21 +3338,26 @@
         let historial =
             obtenerHistorial();
 
+
         historial =
             historial.filter(
                 registro =>
-                    registro.id !== cobroId
+                    registro.id !==
+                    cobroId
             );
+
 
         guardarHistorial(
             historial
         );
+
 
         renderCobrosPorVendedor();
 
         renderHistorial();
 
         actualizarCobroAutomatico();
+
     }
 
 
@@ -3059,15 +3368,24 @@
                 "cobrosPorVendedor"
             );
 
+
         const fecha =
             obtenerFechaSeleccionada();
 
+
         const cobros =
-            obtenerCobrosFecha(fecha);
+            obtenerCobrosFecha(
+                fecha
+            );
 
-        contenedor.innerHTML = "";
 
-        if (cobros.length === 0) {
+        contenedor.innerHTML =
+            "";
+
+
+        if (
+            cobros.length === 0
+        ) {
 
             contenedor.innerHTML =
                 `
@@ -3079,6 +3397,7 @@
             return;
         }
 
+
         vendedores.forEach(
             vendedor => {
 
@@ -3089,15 +3408,24 @@
                             vendedor.id
                     );
 
+
                 if (
                     cobrosVendedor.length === 0
                 ) {
+
                     return;
                 }
 
-                let totalVendido = 0;
-                let totalDinero = 0;
-                let totalGanancia = 0;
+
+                let totalVendido =
+                    0;
+
+                let totalDinero =
+                    0;
+
+                let totalGanancia =
+                    0;
+
 
                 cobrosVendedor.forEach(
                     cobro => {
@@ -3116,15 +3444,20 @@
                             Number(
                                 cobro.ganancia
                             ) || 0;
+
                     }
                 );
 
 
                 const bloque =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
+
 
                 bloque.className =
                     "cobro-vendedor";
+
 
                 bloque.innerHTML =
                     `
@@ -3148,6 +3481,7 @@
 
                             </div>
 
+
                             <div class="resumen-card">
 
                                 <span>
@@ -3159,6 +3493,7 @@
                                 </strong>
 
                             </div>
+
 
                             <div class="resumen-card">
 
@@ -3190,10 +3525,14 @@
                     cobro => {
 
                         const item =
-                            document.createElement("div");
+                            document.createElement(
+                                "div"
+                            );
+
 
                         item.className =
                             "cobro-item";
+
 
                         item.innerHTML =
                             `
@@ -3236,6 +3575,7 @@
 
                             </div>
 
+
                             <button
                                 class="btn-eliminar-cobro"
                                 onclick="eliminarCobro('${cobro.id}','${fecha}')"
@@ -3244,13 +3584,22 @@
                             </button>
                             `;
 
-                        lista.appendChild(item);
+
+                        lista.appendChild(
+                            item
+                        );
+
                     }
                 );
 
-                contenedor.appendChild(bloque);
+
+                contenedor.appendChild(
+                    bloque
+                );
+
             }
         );
+
     }
 
 
@@ -3265,13 +3614,19 @@
                 "listaPrecios"
             );
 
-        tbody.innerHTML = "";
+
+        tbody.innerHTML =
+            "";
+
 
         productos.forEach(
             producto => {
 
                 const tr =
-                    document.createElement("tr");
+                    document.createElement(
+                        "tr"
+                    );
+
 
                 tr.innerHTML =
                     `
@@ -3280,6 +3635,7 @@
                     >
                         ${escaparHTML(producto.nombre)}
                     </td>
+
 
                     <td>
 
@@ -3294,6 +3650,7 @@
 
                     </td>
 
+
                     <td>
 
                         <input
@@ -3306,6 +3663,7 @@
                         >
 
                     </td>
+
 
                     <td>
 
@@ -3322,6 +3680,7 @@
                         '[data-tipo="precio"]'
                     );
 
+
                 const inputGanancia =
                     tr.querySelector(
                         '[data-tipo="ganancia"]'
@@ -3336,6 +3695,7 @@
                             producto.id,
                             this.value
                         );
+
                     }
                 );
 
@@ -3348,13 +3708,18 @@
                             producto.id,
                             this.value
                         );
+
                     }
                 );
 
 
-                tbody.appendChild(tr);
+                tbody.appendChild(
+                    tr
+                );
+
             }
         );
+
     }
 
 
@@ -3369,7 +3734,10 @@
                 "listaReventa"
             );
 
-        tbody.innerHTML = "";
+
+        tbody.innerHTML =
+            "";
+
 
         productos.forEach(
             producto => {
@@ -3379,14 +3747,19 @@
                         producto.id
                     ];
 
+
                 const tieneReventa =
                     Object.prototype.hasOwnProperty.call(
                         preciosReventa,
                         producto.id
                     );
 
+
                 const tr =
-                    document.createElement("tr");
+                    document.createElement(
+                        "tr"
+                    );
+
 
                 tr.innerHTML =
                     `
@@ -3395,6 +3768,7 @@
                     >
                         ${escaparHTML(producto.nombre)}
                     </td>
+
 
                     <td>
 
@@ -3425,19 +3799,25 @@
                             this.value
                         );
 
+
                         this.value =
                             numeroArgentino(
                                 preciosReventa[
                                     producto.id
                                 ]
                             );
+
                     }
                 );
 
 
-                tbody.appendChild(tr);
+                tbody.appendChild(
+                    tr
+                );
+
             }
         );
+
     }
 
 
@@ -3452,13 +3832,17 @@
                 KEY_HISTORIAL
             );
 
+
         if (!datos) {
             return [];
         }
 
+
         try {
 
-            return JSON.parse(datos) || [];
+            return JSON.parse(
+                datos
+            ) || [];
 
         } catch {
 
@@ -3473,7 +3857,9 @@
 
         localStorage.setItem(
             KEY_HISTORIAL,
-            JSON.stringify(historial)
+            JSON.stringify(
+                historial
+            )
         );
     }
 
@@ -3485,14 +3871,23 @@
                 "historialPorVendedor"
             );
 
+
         const historial =
             obtenerHistorial();
 
-        contenedor.innerHTML = "";
 
-        let totalVendidoGeneral = 0;
-        let totalDineroGeneral = 0;
-        let totalGananciaGeneral = 0;
+        contenedor.innerHTML =
+            "";
+
+
+        let totalVendidoGeneral =
+            0;
+
+        let totalDineroGeneral =
+            0;
+
+        let totalGananciaGeneral =
+            0;
 
 
         historial.forEach(
@@ -3512,6 +3907,7 @@
                     Number(
                         registro.ganancia
                     ) || 0;
+
             }
         );
 
@@ -3551,9 +3947,12 @@
                 </div>
                 `;
 
+
             document.getElementById(
                 "historialTotal"
-            ).innerHTML = "";
+            ).innerHTML =
+                "";
+
 
             return;
         }
@@ -3569,16 +3968,23 @@
                             vendedor.id
                     );
 
+
                 if (
                     registros.length === 0
                 ) {
+
                     return;
                 }
 
 
-                let gananciaVendedor = 0;
-                let dineroVendedor = 0;
-                let vendidoVendedor = 0;
+                let gananciaVendedor =
+                    0;
+
+                let dineroVendedor =
+                    0;
+
+                let vendidoVendedor =
+                    0;
 
 
                 registros.forEach(
@@ -3598,15 +4004,20 @@
                             Number(
                                 registro.ganancia
                             ) || 0;
+
                     }
                 );
 
 
                 const bloque =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
+
 
                 bloque.className =
                     "historial-vendedor";
+
 
                 bloque.innerHTML =
                     `
@@ -3615,6 +4026,7 @@
                         <h3>
                             ${escaparHTML(vendedor.nombre)}
                         </h3>
+
 
                         <div class="historial-resumen">
 
@@ -3630,6 +4042,7 @@
 
                             </div>
 
+
                             <div class="item">
 
                                 <span>
@@ -3641,6 +4054,7 @@
                                 </strong>
 
                             </div>
+
 
                             <div class="item">
 
@@ -3658,6 +4072,7 @@
 
                     </div>
 
+
                     <div class="historial-tabla">
 
                         <table>
@@ -3666,17 +4081,38 @@
 
                                 <tr>
 
-                                    <th>Fecha</th>
-                                    <th>Mercadería</th>
-                                    <th>Llevó</th>
-                                    <th>Vendió</th>
-                                    <th>Plata</th>
-                                    <th>Ganancia</th>
-                                    <th>Acción</th>
+                                    <th>
+                                        Fecha
+                                    </th>
+
+                                    <th>
+                                        Mercadería
+                                    </th>
+
+                                    <th>
+                                        Llevó
+                                    </th>
+
+                                    <th>
+                                        Vendió
+                                    </th>
+
+                                    <th>
+                                        Plata
+                                    </th>
+
+                                    <th>
+                                        Ganancia
+                                    </th>
+
+                                    <th>
+                                        Acción
+                                    </th>
 
                                 </tr>
 
                             </thead>
+
 
                             <tbody></tbody>
 
@@ -3687,23 +4123,32 @@
 
 
                 const tbody =
-                    bloque.querySelector("tbody");
+                    bloque.querySelector(
+                        "tbody"
+                    );
 
 
                 registros
                     .slice()
                     .sort(
                         (a,b) =>
-                            String(b.fecha)
+                            String(
+                                b.fecha
+                            )
                                 .localeCompare(
-                                    String(a.fecha)
+                                    String(
+                                        a.fecha
+                                    )
                                 )
                     )
                     .forEach(
                         registro => {
 
                             const tr =
-                                document.createElement("tr");
+                                document.createElement(
+                                    "tr"
+                                );
+
 
                             tr.innerHTML =
                                 `
@@ -3745,12 +4190,19 @@
                                 </td>
                                 `;
 
-                            tbody.appendChild(tr);
+
+                            tbody.appendChild(
+                                tr
+                            );
+
                         }
                     );
 
 
-                contenedor.appendChild(bloque);
+                contenedor.appendChild(
+                    bloque
+                );
+
             }
         );
 
@@ -3760,11 +4212,14 @@
         ).innerHTML =
             `
             <div class="sin-registros">
+
                 Historial general:
                 ${numeroArgentino(historial.length)}
                 registro(s).
+
             </div>
             `;
+
     }
 
 
@@ -3785,17 +4240,20 @@
         let historial =
             obtenerHistorial();
 
+
         const registro =
             historial.find(
                 item =>
-                    item.id === registroId
+                    item.id ===
+                    registroId
             );
 
 
         historial =
             historial.filter(
                 item =>
-                    item.id !== registroId
+                    item.id !==
+                    registroId
             );
 
 
@@ -3807,13 +4265,18 @@
         if (registro) {
 
             let cobros =
-                obtenerCobrosFecha(fecha);
+                obtenerCobrosFecha(
+                    fecha
+                );
+
 
             cobros =
                 cobros.filter(
                     cobro =>
-                        cobro.id !== registroId
+                        cobro.id !==
+                        registroId
                 );
+
 
             guardarCobrosFecha(
                 fecha,
@@ -3825,6 +4288,7 @@
         renderCobrosPorVendedor();
 
         renderHistorial();
+
     }
 
 
@@ -3838,9 +4302,11 @@
             return;
         }
 
+
         localStorage.removeItem(
             KEY_HISTORIAL
         );
+
 
         Object.keys(
             localStorage
@@ -3849,20 +4315,25 @@
 
                 if (
                     clave.startsWith(
-                        KEY_COBROS + "_"
+                        KEY_COBROS +
+                        "_"
                     )
                 ) {
 
                     localStorage.removeItem(
                         clave
                     );
+
                 }
+
             }
         );
+
 
         renderCobrosPorVendedor();
 
         renderHistorial();
+
     }
 
 
@@ -3875,11 +4346,21 @@
             "panelCalculadora"
         );
 
-    let calcValorActual = "0";
-    let calcValorAnterior = null;
-    let calcOperadorActual = null;
-    let calcEsperandoNuevoNumero = false;
-    let calcExpresion = "";
+
+    let calcValorActual =
+        "0";
+
+    let calcValorAnterior =
+        null;
+
+    let calcOperadorActual =
+        null;
+
+    let calcEsperandoNuevoNumero =
+        false;
+
+    let calcExpresion =
+        "";
 
 
     function calcActualizarPantalla() {
@@ -3891,52 +4372,80 @@
                 calcValorActual
             );
 
+
         document.getElementById(
             "calcOperacion"
         ).textContent =
             calcExpresion;
+
     }
 
 
-    function calcFormatearDisplay(valor) {
+    function calcFormatearDisplay(
+        valor
+    ) {
 
         if (
             valor === "" ||
             valor === null ||
             valor === undefined
         ) {
+
             return "0";
         }
 
+
         if (
-            String(valor).includes(".")
+            String(
+                valor
+            ).includes(".")
         ) {
-            return String(valor);
+
+            return String(
+                valor
+            );
         }
+
 
         const numero =
-            Number(valor);
+            Number(
+                valor
+            );
+
 
         if (
-            !Number.isFinite(numero)
+            !Number.isFinite(
+                numero
+            )
         ) {
-            return String(valor);
+
+            return String(
+                valor
+            );
         }
 
-        return numeroArgentino(numero);
+
+        return numeroArgentino(
+            numero
+        );
+
     }
 
 
-    function calcNumero(numero) {
+    function calcNumero(
+        numero
+    ) {
 
         if (
             calcEsperandoNuevoNumero
         ) {
 
-            calcValorActual = "0";
+            calcValorActual =
+                "0";
 
             calcEsperandoNuevoNumero =
                 false;
+
         }
 
 
@@ -3944,6 +4453,7 @@
             numero === "." &&
             calcValorActual.includes(".")
         ) {
+
             return;
         }
 
@@ -3960,14 +4470,18 @@
 
             calcValorActual +=
                 numero;
+
         }
 
 
         calcActualizarPantalla();
+
     }
 
 
-    function calcOperacion(operador) {
+    function calcOperacion(
+        operador
+    ) {
 
         if (
             calcOperadorActual &&
@@ -3999,27 +4513,37 @@
             const resultado =
                 calcRealizarOperacion(
                     calcValorAnterior,
-                    Number(calcValorActual),
+                    Number(
+                        calcValorActual
+                    ),
                     calcOperadorActual
                 );
+
 
             calcValorAnterior =
                 resultado;
 
+
             calcValorActual =
-                String(resultado);
+                String(
+                    resultado
+                );
+
         }
 
 
         calcOperadorActual =
             operador;
 
+
         calcEsperandoNuevoNumero =
             true;
+
 
         calcActualizarExpresion();
 
         calcActualizarPantalla();
+
     }
 
 
@@ -4049,8 +4573,10 @@
 
         } else {
 
-            calcExpresion = "";
+            calcExpresion =
+                "";
         }
+
     }
 
 
@@ -4061,14 +4587,22 @@
         const mapa = {
 
             "+": "+",
+
             "-": "−",
+
             "*": "×",
+
             "/": "÷",
+
             "%": "%"
 
         };
 
-        return mapa[operador] || operador;
+
+        return mapa[
+            operador
+        ] || operador;
+
     }
 
 
@@ -4078,31 +4612,48 @@
         operador
     ) {
 
-        switch(operador) {
+        switch(
+            operador
+        ) {
 
             case "+":
+
                 return a + b;
 
+
             case "-":
+
                 return a - b;
 
+
             case "*":
+
                 return a * b;
+
 
             case "/":
 
-                if (b === 0) {
+                if (
+                    b === 0
+                ) {
+
                     return 0;
                 }
 
                 return a / b;
 
+
             case "%":
+
                 return a % b;
 
+
             default:
+
                 return b;
+
         }
+
     }
 
 
@@ -4112,17 +4663,24 @@
             !calcOperadorActual ||
             calcValorAnterior === null
         ) {
+
             return;
         }
+
 
         const a =
             calcValorAnterior;
 
+
         const b =
-            Number(calcValorActual);
+            Number(
+                calcValorActual
+            );
+
 
         const operador =
             calcOperadorActual;
+
 
         const resultado =
             calcRealizarOperacion(
@@ -4130,6 +4688,7 @@
                 b,
                 operador
             );
+
 
         calcExpresion =
             calcFormatearDisplay(a) +
@@ -4141,29 +4700,50 @@
             calcFormatearDisplay(b) +
             " =";
 
+
         calcValorActual =
-            String(resultado);
+            String(
+                resultado
+            );
 
-        calcValorAnterior = null;
 
-        calcOperadorActual = null;
+        calcValorAnterior =
+            null;
+
+
+        calcOperadorActual =
+            null;
+
 
         calcEsperandoNuevoNumero =
             true;
 
+
         calcActualizarPantalla();
+
     }
 
 
     function calcLimpiar() {
 
-        calcValorActual = "0";
-        calcValorAnterior = null;
-        calcOperadorActual = null;
-        calcEsperandoNuevoNumero = false;
-        calcExpresion = "";
+        calcValorActual =
+            "0";
+
+        calcValorAnterior =
+            null;
+
+        calcOperadorActual =
+            null;
+
+        calcEsperandoNuevoNumero =
+            false;
+
+        calcExpresion =
+            "";
+
 
         calcActualizarPantalla();
+
     }
 
 
@@ -4172,14 +4752,17 @@
         if (
             calcEsperandoNuevoNumero
         ) {
+
             return;
         }
+
 
         if (
             calcValorActual.length <= 1
         ) {
 
-            calcValorActual = "0";
+            calcValorActual =
+                "0";
 
         } else {
 
@@ -4188,9 +4771,12 @@
                     0,
                     -1
                 );
+
         }
 
+
         calcActualizarPantalla();
+
     }
 
 
@@ -4201,16 +4787,22 @@
             const tecla =
                 event.key;
 
+
             if (
-                /^[0-9.]$/.test(tecla)
+                /^[0-9.]$/.test(
+                    tecla
+                )
             ) {
 
                 event.preventDefault();
 
-                calcNumero(tecla);
+                calcNumero(
+                    tecla
+                );
 
                 return;
             }
+
 
             if (
                 [
@@ -4219,15 +4811,20 @@
                     "*",
                     "/",
                     "%"
-                ].includes(tecla)
+                ].includes(
+                    tecla
+                )
             ) {
 
                 event.preventDefault();
 
-                calcOperacion(tecla);
+                calcOperacion(
+                    tecla
+                );
 
                 return;
             }
+
 
             if (
                 tecla === "Enter" ||
@@ -4241,6 +4838,7 @@
                 return;
             }
 
+
             if (
                 tecla === "Backspace"
             ) {
@@ -4252,6 +4850,7 @@
                 return;
             }
 
+
             if (
                 tecla === "Escape"
             ) {
@@ -4259,7 +4858,9 @@
                 event.preventDefault();
 
                 calcLimpiar();
+
             }
+
         }
     );
 
@@ -4269,10 +4870,6 @@
     ========================================================= */
 
 
-    /*
-     * DONAS - PRECIO
-     */
-
     cobroPrecio.addEventListener(
         "input",
         function() {
@@ -4281,8 +4878,10 @@
                 cobroProducto.value !==
                 "donas"
             ) {
+
                 return;
             }
+
 
             this.value =
                 this.value.replace(
@@ -4290,21 +4889,21 @@
                     ""
                 );
 
-            /*
-             * Actualizamos visualmente
-             * el cálculo mientras escribe.
-             */
+
             const precio =
                 limpiarNumero(
                     this.value
                 );
 
+
             const datos =
                 obtenerDatosCobroActual();
+
 
             if (!datos) {
                 return;
             }
+
 
             const sobrante =
                 Math.max(
@@ -4316,25 +4915,24 @@
                     )
                 );
 
+
             const vendido =
                 Math.max(
                     0,
                     datos.llevada -
                     sobrante
                 );
+
 
             cobroDinero.value =
                 formatoPesos(
                     vendido *
                     precio
                 );
+
         }
     );
 
-
-    /*
-     * DONAS - GUARDAR PRECIO
-     */
 
     cobroPrecio.addEventListener(
         "change",
@@ -4344,22 +4942,22 @@
                 cobroProducto.value !==
                 "donas"
             ) {
+
                 return;
             }
+
 
             cambiarPrecioProducto(
                 "donas",
                 this.value
             );
 
+
             actualizarCobroAutomatico();
+
         }
     );
 
-
-    /*
-     * DONAS - GANANCIA
-     */
 
     cobroGananciaUnidad.addEventListener(
         "input",
@@ -4369,8 +4967,10 @@
                 cobroProducto.value !==
                 "donas"
             ) {
+
                 return;
             }
+
 
             this.value =
                 this.value.replace(
@@ -4378,17 +4978,21 @@
                     ""
                 );
 
+
             const ganancia =
                 limpiarNumero(
                     this.value
                 );
 
+
             const datos =
                 obtenerDatosCobroActual();
+
 
             if (!datos) {
                 return;
             }
+
 
             const sobrante =
                 Math.max(
@@ -4400,6 +5004,7 @@
                     )
                 );
 
+
             const vendido =
                 Math.max(
                     0,
@@ -4407,18 +5012,16 @@
                     sobrante
                 );
 
+
             cobroGanancia.value =
                 formatoPesos(
                     vendido *
                     ganancia
                 );
+
         }
     );
 
-
-    /*
-     * DONAS - GUARDAR GANANCIA
-     */
 
     cobroGananciaUnidad.addEventListener(
         "change",
@@ -4428,23 +5031,22 @@
                 cobroProducto.value !==
                 "donas"
             ) {
+
                 return;
             }
+
 
             cambiarGananciaProducto(
                 "donas",
                 this.value
             );
 
+
             actualizarCobroAutomatico();
+
         }
     );
 
-
-    /*
-     * En celular, cuando toca el campo,
-     * seleccionamos todo el contenido.
-     */
 
     cobroPrecio.addEventListener(
         "focus",
@@ -4457,11 +5059,15 @@
 
                 setTimeout(
                     () => {
+
                         this.select();
+
                     },
                     50
                 );
+
             }
+
         }
     );
 
@@ -4477,11 +5083,15 @@
 
                 setTimeout(
                     () => {
+
                         this.select();
+
                     },
                     50
                 );
+
             }
+
         }
     );
 
@@ -4490,9 +5100,11 @@
         "change",
         function() {
 
-            cobroSobrante.value = "";
+            cobroSobrante.value =
+                "";
 
             actualizarCobroAutomatico();
+
         }
     );
 
@@ -4501,9 +5113,11 @@
         "change",
         function() {
 
-            cobroSobrante.value = "";
+            cobroSobrante.value =
+                "";
 
             actualizarCobroAutomatico();
+
         }
     );
 
@@ -4518,7 +5132,9 @@
                     ""
                 );
 
+
             actualizarCobroAutomatico();
+
         }
     );
 
@@ -4528,6 +5144,7 @@
         function() {
 
             validarSobrante();
+
         }
     );
 
@@ -4551,6 +5168,7 @@
             renderHistorial();
 
             actualizarCobroAutomatico();
+
         }
     );
 
@@ -4576,6 +5194,7 @@
         actualizarCobroAutomatico();
 
         calcActualizarPantalla();
+
     }
 
 
