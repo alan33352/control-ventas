@@ -661,10 +661,6 @@
 
 <div class="contenedor">
 
-    <!-- =========================
-         ENCABEZADO
-    ========================= -->
-
     <header class="encabezado">
 
         <div class="encabezado-superior">
@@ -743,10 +739,6 @@
     </header>
 
 
-    <!-- =========================
-         VENTAS DEL DÍA
-    ========================= -->
-
     <div class="seccion">
 
         <h2>
@@ -769,10 +761,6 @@
 
     </div>
 
-
-    <!-- =========================
-         COBRO + CALCULADORA
-    ========================= -->
 
     <div class="paneles-abajo">
 
@@ -863,7 +851,15 @@
                 </div>
 
 
-                <div class="campo campo-automatico">
+                <!-- =========================
+                     PRECIO DE VENTA
+                     DONAS: EDITABLE
+                ========================= -->
+
+                <div
+                    class="campo campo-automatico"
+                    id="campoCobroPrecio"
+                >
 
                     <label for="cobroPrecio">
                         Precio de venta
@@ -874,12 +870,22 @@
                         id="cobroPrecio"
                         value="$0"
                         readonly
+                        inputmode="numeric"
+                        autocomplete="off"
                     >
 
                 </div>
 
 
-                <div class="campo campo-automatico">
+                <!-- =========================
+                     GANANCIA POR UNIDAD
+                     DONAS: EDITABLE
+                ========================= -->
+
+                <div
+                    class="campo campo-automatico"
+                    id="campoCobroGananciaUnidad"
+                >
 
                     <label for="cobroGananciaUnidad">
                         Ganancia por unidad
@@ -890,6 +896,8 @@
                         id="cobroGananciaUnidad"
                         value="$0"
                         readonly
+                        inputmode="numeric"
+                        autocomplete="off"
                     >
 
                 </div>
@@ -946,8 +954,6 @@
 
         </div>
 
-
-        <!-- CALCULADORA -->
 
         <div
             class="panel-calculadora"
@@ -1123,10 +1129,6 @@
     </div>
 
 
-    <!-- =========================
-         PRODUCTOS Y PRECIOS
-    ========================= -->
-
     <div class="seccion">
 
         <h2>
@@ -1171,10 +1173,6 @@
     </div>
 
 
-    <!-- =========================
-         PRECIOS DE REVENTA
-    ========================= -->
-
     <div class="seccion">
 
         <h2>
@@ -1210,10 +1208,6 @@
 
     </div>
 
-
-    <!-- =========================
-         HISTORIAL
-    ========================= -->
 
     <div class="seccion">
 
@@ -1566,10 +1560,6 @@
     }
 
 
-    /*
-       AHORA PERMITE ELEGIR QUÉ VENDEDOR ELIMINAR
-    */
-
     function eliminarUltimoVendedor() {
 
         if (
@@ -1849,6 +1839,13 @@
             nombre: "Bon o Bon",
             precio: 1000,
             ganancia: 100
+        },
+
+        {
+            id: "donas",
+            nombre: "Donas",
+            precio: 0,
+            ganancia: 0
         }
 
     ];
@@ -1875,6 +1872,35 @@
                     productosIniciales
                 )
             );
+
+
+        guardarProductos();
+    }
+
+
+    /*
+       Agregamos Donas automáticamente
+       si todavía no existe.
+    */
+
+    if (
+        !productos.some(
+            producto =>
+                producto.id === "donas"
+        )
+    ) {
+
+        productos.push({
+
+            id: "donas",
+
+            nombre: "Donas",
+
+            precio: 0,
+
+            ganancia: 0
+
+        });
 
 
         guardarProductos();
@@ -1974,10 +2000,6 @@
         cargarTodo();
     }
 
-
-    /*
-       AHORA PERMITE ELEGIR QUÉ PRODUCTO ELIMINAR
-    */
 
     function eliminarUltimoProducto() {
 
@@ -2102,6 +2124,10 @@
 
         guardarProductos();
 
+        renderPrecios();
+
+        renderReventa();
+
         actualizarCobroAutomatico();
     }
 
@@ -2131,6 +2157,8 @@
 
 
         guardarProductos();
+
+        renderPrecios();
 
         actualizarCobroAutomatico();
     }
@@ -2463,7 +2491,6 @@
         encabezado.innerHTML =
             "";
 
-
         cuerpo.innerHTML =
             "";
 
@@ -2727,6 +2754,22 @@
         );
 
 
+    /*
+       Campos especiales para Donas.
+    */
+
+    const campoCobroPrecio =
+        document.getElementById(
+            "campoCobroPrecio"
+        );
+
+
+    const campoCobroGananciaUnidad =
+        document.getElementById(
+            "campoCobroGananciaUnidad"
+        );
+
+
     function renderSelectsCobro() {
 
         const vendedorSeleccionado =
@@ -2911,6 +2954,19 @@
     }
 
 
+    /*
+       =========================================================
+       ACTUALIZAR COBRO
+       
+       Para Donas:
+       - Precio de venta editable.
+       - Ganancia por unidad editable.
+
+       Para los demás:
+       - Ambos siguen siendo automáticos.
+       =========================================================
+    */
+
     function actualizarCobroAutomatico() {
 
         const datos =
@@ -2943,8 +2999,55 @@
                 "$0";
 
 
+            cobroPrecio.readOnly =
+                true;
+
+
+            cobroGananciaUnidad.readOnly =
+                true;
+
+
+            campoCobroPrecio.classList.add(
+                "campo-automatico"
+            );
+
+
+            campoCobroGananciaUnidad.classList.add(
+                "campo-automatico"
+            );
+
+
             return;
         }
+
+
+        const esDona =
+            datos.productoId ===
+            "donas";
+
+
+        /*
+           Solo Donas puede editar estos dos campos.
+        */
+
+        cobroPrecio.readOnly =
+            !esDona;
+
+
+        cobroGananciaUnidad.readOnly =
+            !esDona;
+
+
+        campoCobroPrecio.classList.toggle(
+            "campo-automatico",
+            !esDona
+        );
+
+
+        campoCobroGananciaUnidad.classList.toggle(
+            "campo-automatico",
+            !esDona
+        );
 
 
         const llevada =
@@ -2992,16 +3095,32 @@
             );
 
 
-        cobroPrecio.value =
-            formatoPesos(
-                datos.precio
-            );
+        if (!esDona) {
+
+            cobroPrecio.value =
+                formatoPesos(
+                    datos.precio
+                );
 
 
-        cobroGananciaUnidad.value =
-            formatoPesos(
-                datos.gananciaUnidad
-            );
+            cobroGananciaUnidad.value =
+                formatoPesos(
+                    datos.gananciaUnidad
+                );
+
+        } else {
+
+            cobroPrecio.value =
+                numeroArgentino(
+                    datos.precio
+                );
+
+
+            cobroGananciaUnidad.value =
+                numeroArgentino(
+                    datos.gananciaUnidad
+                );
+        }
 
 
         cobroDinero.value =
@@ -3818,16 +3937,6 @@
                             this.value
                         );
 
-
-                        this.value =
-                            numeroArgentino(
-                                productoActual(
-                                    producto.id
-                                ).precio
-                            );
-
-
-                        actualizarCobroAutomatico();
                     }
                 );
 
@@ -3841,16 +3950,6 @@
                             this.value
                         );
 
-
-                        this.value =
-                            numeroArgentino(
-                                productoActual(
-                                    producto.id
-                                ).ganancia
-                            );
-
-
-                        actualizarCobroAutomatico();
                     }
                 );
 
@@ -5129,8 +5228,6 @@
     }
 
 
-    /* SOLO captura teclado dentro de la calculadora */
-
     panelCalculadora.addEventListener(
         "keydown",
         function(event) {
@@ -5218,6 +5315,66 @@
     /* =========================================================
        EVENTOS
     ========================================================= */
+
+    /*
+       =========================================================
+       DONAS - PRECIO EDITABLE
+       =========================================================
+    */
+
+    cobroPrecio.addEventListener(
+        "change",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
+
+
+            cambiarPrecioProducto(
+                "donas",
+                this.value
+            );
+
+
+            actualizarCobroAutomatico();
+        }
+    );
+
+
+    /*
+       =========================================================
+       DONAS - GANANCIA EDITABLE
+       =========================================================
+    */
+
+    cobroGananciaUnidad.addEventListener(
+        "change",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
+
+
+            cambiarGananciaProducto(
+                "donas",
+                this.value
+            );
+
+
+            actualizarCobroAutomatico();
+        }
+    );
+
 
     cobroVendedor.addEventListener(
         "change",
@@ -5392,8 +5549,6 @@
 
     cargarTodo();
 
-
-    /* Inicia la alerta cada 1 minuto */
 
     iniciarAlertaGuardado();
 
