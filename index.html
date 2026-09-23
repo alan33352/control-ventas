@@ -1,861 +1,2355 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-    <title>Control de Ventas</title>
+<title>Control de Ventas</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: #d8d4c5;
-            color: #26352c;
-            font-family: Georgia, "Times New Roman", serif;
-        }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f5f4;
+    color: #222;
+    padding: 15px;
+}
 
-        header {
-            width: 100%;
-            background: #354b3d;
-            color: #eee9d9;
-            padding: 22px 30px;
-            border-bottom: 5px solid #9b9b72;
-        }
+.contenedor {
+    width: 100%;
+    max-width: 1500px;
+    margin: auto;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 30px;
-            font-weight: normal;
-        }
+header,
+.seccion,
+.panel {
+    background: white;
+    border: 1px solid #d7dcd9;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 18px;
+}
 
-        header p {
-            margin: 6px 0 0;
-            font-size: 15px;
-            color: #d8d4c5;
-        }
+h1 {
+    font-size: 27px;
+    margin-bottom: 5px;
+}
 
-        .contenedor {
-            width: 100%;
-            min-height: calc(100vh - 100px);
-            padding: 25px;
-        }
+.subtitulo {
+    color: #666;
+    font-size: 14px;
+}
 
-        .barra-superior {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
+.encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
-        .titulo-seccion {
-            color: #354b3d;
-            font-size: 24px;
-        }
+.fecha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .botones {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+input,
+select,
+button {
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        button {
-            border: 1px solid #536958;
-            background: #536958;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 3px;
-            font-family: Georgia, "Times New Roman", serif;
-            cursor: pointer;
-            font-size: 14px;
-        }
+input,
+select {
+    border: 1px solid #bfc6c2;
+    border-radius: 7px;
+    padding: 10px;
+    font-size: 15px;
+    background: white;
+}
 
-        button:hover {
-            background: #405344;
-        }
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
 
-        .tabla-contenedor {
-            width: 100%;
-            overflow-x: auto;
-            background: #eeecdf;
-            border: 1px solid #9a9a82;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.12);
-        }
+button:active {
+    transform: scale(.98);
+}
 
-        table {
-            width: 100%;
-            min-width: 850px;
-            border-collapse: collapse;
-        }
+.botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
 
-        th {
-            background: #536958;
-            color: #f4f0df;
-            padding: 13px 10px;
-            border: 1px solid #405344;
-            font-weight: normal;
-            text-align: left;
-        }
+.btn-verde {
+    background: #356b4d;
+    color: white;
+}
 
-        td {
-            padding: 10px;
-            border: 1px solid #aaa995;
-            background: #f1efdf;
-            vertical-align: middle;
-        }
+.btn-azul {
+    background: #315f7d;
+    color: white;
+}
 
-        tr:nth-child(even) td {
-            background: #e8e6d7;
-        }
+.btn-rojo {
+    background: #a64040;
+    color: white;
+}
 
-        .producto {
-            font-weight: bold;
-            min-width: 180px;
-        }
+.btn-gris {
+    background: #555;
+    color: white;
+}
 
-        .campo {
-            width: 150px;
-        }
+/* TABLAS */
 
-        .campo input {
-            display: block;
-            width: 100%;
-            min-height: 44px;
-            padding: 10px;
-            border: 2px solid #9a9a82;
-            background: #fffef5;
-            color: #26352c;
-            border-radius: 3px;
-            font-family: Georgia, "Times New Roman", serif;
-            font-size: 16px;
-            outline: none;
+.tabla-contenedor {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
 
-            /* IMPORTANTE PARA CELULAR */
-            -webkit-appearance: none;
-            appearance: none;
-            pointer-events: auto;
-            user-select: text;
-            -webkit-user-select: text;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
 
-        .campo input:focus {
-            border-color: #536958;
-            background: white;
-        }
+th,
+td {
+    border: 1px solid #d8ddda;
+    padding: 9px;
+    text-align: center;
+}
 
-        .ganancia {
-            font-weight: bold;
-            color: #405d47;
-        }
+th {
+    background: #e9eeeb;
+    color: #26362d;
+    font-size: 14px;
+}
 
-        .estado {
-            margin-top: 15px;
-            padding: 12px 15px;
-            background: #e9e5d5;
-            border-left: 4px solid #536958;
-            font-size: 14px;
-        }
+td {
+    background: white;
+}
 
-        .resumen {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
+.nombre-producto {
+    text-align: left;
+    font-weight: bold;
+    min-width: 210px;
+}
 
-        .tarjeta {
-            background: #eeecdf;
-            border: 1px solid #9a9a82;
-            padding: 18px;
-            min-height: 100px;
-        }
+/* CAMPOS DE PRECIO */
 
-        .tarjeta h3 {
-            margin: 0 0 10px;
-            font-size: 15px;
-            font-weight: normal;
-            color: #526254;
-        }
+.precio-editable,
+.ganancia-editable {
+    width: 150px;
+    min-height: 44px;
+    padding: 10px;
+    border: 2px solid #aeb8b2;
+    border-radius: 7px;
+    background: #fffef4;
+    color: #111;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: right;
 
-        .tarjeta strong {
-            font-size: 25px;
-            color: #354b3d;
-        }
+    /* IMPORTANTE PARA CELULAR */
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-appearance: none;
+    appearance: none;
+    touch-action: manipulation;
+}
 
-        footer {
-            margin-top: 30px;
-            padding: 18px;
-            border-top: 1px solid #9a9a82;
-            color: #596357;
-            font-size: 13px;
-            text-align: center;
-        }
+.precio-editable:focus,
+.ganancia-editable:focus {
+    outline: none;
+    border-color: #356b4d;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(53,107,77,.12);
+}
 
-        @media (max-width: 700px) {
+.estado {
+    color: #356b4d;
+    font-size: 12px;
+    font-weight: bold;
+}
 
-            header {
-                padding: 18px 15px;
-            }
+/* VENTAS */
 
-            header h1 {
-                font-size: 24px;
-            }
+.cantidad {
+    width: 90px;
+    text-align: center;
+}
 
-            .contenedor {
-                padding: 12px;
-            }
+.nombre-vendedor {
+    width: 130px;
+    text-align: center;
+}
 
-            .titulo-seccion {
-                font-size: 21px;
-            }
+/* RESUMEN */
 
-            .barra-superior {
-                display: block;
-            }
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
 
-            .botones {
-                margin-top: 12px;
-            }
+.card {
+    border: 1px solid #d7dcd9;
+    border-radius: 8px;
+    padding: 15px;
+    background: #f8faf9;
+}
 
-            button {
-                min-height: 44px;
-                padding: 10px 14px;
-            }
+.card span {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 7px;
+}
 
-            .tabla-contenedor {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
+.card strong {
+    font-size: 22px;
+}
 
-            table {
-                min-width: 780px;
-            }
+/* COBRO */
 
-            .campo input {
-                min-height: 48px;
-                font-size: 17px;
-            }
+.formulario {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
 
-            .resumen {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.campo label {
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.completo {
+    grid-column: 1 / -1;
+}
+
+.automatico {
+    background: #eef2ef;
+}
+
+/* MENSAJE */
+
+.mensaje {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #26352c;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    display: none;
+    z-index: 9999;
+    font-size: 14px;
+}
+
+/* CELULAR */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 7px;
+    }
+
+    header,
+    .seccion,
+    .panel {
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .subtitulo {
+        font-size: 12px;
+    }
+
+    .fecha {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .fecha input {
+        flex: 1;
+    }
+
+    .botones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .botones button {
+        width: 100%;
+        min-height: 45px;
+    }
+
+    .resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .completo {
+        grid-column: auto;
+    }
+
+    /*
+       ESTO ES IMPORTANTE:
+       los campos de precio y ganancia siguen
+       siendo grandes y tocables en celular.
+    */
+    .precio-editable,
+    .ganancia-editable {
+        width: 135px;
+        min-height: 48px;
+        font-size: 17px;
+    }
+
+    .tabla-contenedor {
+        border: 1px solid #ddd;
+        border-radius: 7px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-<header>
-    <h1>Control de Ventas</h1>
-    <p>Registro de productos, precios y ganancias</p>
-</header>
-
 <div class="contenedor">
 
-    <div class="barra-superior">
+<header>
 
-        <div class="titulo-seccion">
-            Lista de productos
+    <div class="encabezado">
+
+        <div>
+            <h1>Control de Ventas</h1>
+
+            <div class="subtitulo">
+                Control diario de productos, ventas y ganancias
+            </div>
         </div>
 
-        <div class="botones">
-            <button onclick="guardarTodo()">Guardar cambios</button>
-            <button onclick="restaurarDatos()">Restaurar datos</button>
-            <button onclick="window.print()">Imprimir</button>
+        <div class="fecha">
+            <strong>Fecha:</strong>
+            <input type="date" id="fecha">
         </div>
 
     </div>
+
+    <div class="botones">
+
+        <button class="btn-verde" onclick="guardarTodo()">
+            Guardar
+        </button>
+
+        <button class="btn-azul" onclick="agregarProducto()">
+            + Agregar producto
+        </button>
+
+        <button class="btn-rojo" onclick="eliminarProducto()">
+            - Eliminar producto
+        </button>
+
+        <button class="btn-azul" onclick="agregarVendedor()">
+            + Agregar vendedor
+        </button>
+
+        <button class="btn-rojo" onclick="eliminarVendedor()">
+            - Eliminar vendedor
+        </button>
+
+        <button class="btn-gris" onclick="borrarVentas()">
+            Borrar ventas del día
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- PRODUCTOS -->
+
+<section class="seccion">
+
+    <h2>Productos y precios</h2>
+
+    <p style="margin:8px 0 15px;color:#666;font-size:13px;">
+        Podés tocar directamente el precio o la ganancia y modificarlo.
+        Los cambios quedan guardados en este dispositivo.
+    </p>
 
     <div class="tabla-contenedor">
 
         <table>
 
             <thead>
+
                 <tr>
                     <th>Producto</th>
                     <th>Precio de venta</th>
                     <th>Ganancia por unidad</th>
-                    <th>Costo aproximado</th>
-                    <th>Ganancia %</th>
+                    <th>Estado</th>
                 </tr>
+
             </thead>
 
-            <tbody>
-
-                <tr>
-                    <td class="producto">Tortafrita</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-tortafrita"
-                            data-producto="tortafrita"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('tortafrita')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-tortafrita"
-                            data-producto="tortafrita"
-                            data-tipo="ganancia"
-                            value="200"
-                            oninput="actualizar('tortafrita')">
-                    </td>
-
-                    <td id="costo-tortafrita">$0</td>
-                    <td id="porcentaje-tortafrita">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Bollo</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-bollo"
-                            data-producto="bollo"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('bollo')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-bollo"
-                            data-producto="bollo"
-                            data-tipo="ganancia"
-                            value="200"
-                            oninput="actualizar('bollo')">
-                    </td>
-
-                    <td id="costo-bollo">$0</td>
-                    <td id="porcentaje-bollo">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Café</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-cafe"
-                            data-producto="cafe"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('cafe')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-cafe"
-                            data-producto="cafe"
-                            data-tipo="ganancia"
-                            value="200"
-                            oninput="actualizar('cafe')">
-                    </td>
-
-                    <td id="costo-cafe">$0</td>
-                    <td id="porcentaje-cafe">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Ensalada de frutas</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-ensalada"
-                            data-producto="ensalada"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('ensalada')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-ensalada"
-                            data-producto="ensalada"
-                            data-tipo="ganancia"
-                            value="500"
-                            oninput="actualizar('ensalada')">
-                    </td>
-
-                    <td id="costo-ensalada">$0</td>
-                    <td id="porcentaje-ensalada">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Bandejitas</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-bandejitas"
-                            data-producto="bandejitas"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('bandejitas')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-bandejitas"
-                            data-producto="bandejitas"
-                            data-tipo="ganancia"
-                            value="300"
-                            oninput="actualizar('bandejitas')">
-                    </td>
-
-                    <td id="costo-bandejitas">$0</td>
-                    <td id="porcentaje-bandejitas">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Sandwiches de miga</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-sandwiches"
-                            data-producto="sandwiches"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('sandwiches')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-sandwiches"
-                            data-producto="sandwiches"
-                            data-tipo="ganancia"
-                            value="300"
-                            oninput="actualizar('sandwiches')">
-                    </td>
-
-                    <td id="costo-sandwiches">$0</td>
-                    <td id="porcentaje-sandwiches">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Bon o Bon</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-bonobon"
-                            data-producto="bonobon"
-                            data-tipo="precio"
-                            value="0"
-                            oninput="actualizar('bonobon')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-bonobon"
-                            data-producto="bonobon"
-                            data-tipo="ganancia"
-                            value="100"
-                            oninput="actualizar('bonobon')">
-                    </td>
-
-                    <td id="costo-bonobon">$0</td>
-                    <td id="porcentaje-bonobon">0%</td>
-                </tr>
-
-
-                <tr>
-                    <td class="producto">Donas - paquete</td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="precio-donas"
-                            data-producto="donas"
-                            data-tipo="precio"
-                            value="2000"
-                            oninput="actualizar('donas')">
-                    </td>
-
-                    <td class="campo">
-                        <input
-                            type="number"
-                            inputmode="numeric"
-                            id="ganancia-donas"
-                            data-producto="donas"
-                            data-tipo="ganancia"
-                            value="200"
-                            oninput="actualizar('donas')">
-                    </td>
-
-                    <td id="costo-donas">$1800</td>
-                    <td id="porcentaje-donas">10%</td>
-                </tr>
-
-            </tbody>
+            <tbody id="tablaProductos"></tbody>
 
         </table>
 
     </div>
 
+</section>
 
-    <div class="estado" id="estado">
-        Los cambios se guardan automáticamente en este dispositivo.
+
+<!-- VENTAS -->
+
+<section class="seccion">
+
+    <h2>Ventas del día</h2>
+
+    <div class="tabla-contenedor">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Vendedor</th>
+
+                    <th>Producto</th>
+
+                    <th>Cantidad</th>
+
+                    <th>Precio</th>
+
+                    <th>Ganancia</th>
+
+                    <th>Total</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="tablaVentas"></tbody>
+
+        </table>
+
     </div>
 
+</section>
+
+
+<!-- COBRO -->
+
+<section class="panel">
+
+    <h2 style="margin-bottom:15px;">
+        Registrar venta
+    </h2>
+
+    <div class="formulario">
+
+        <div class="campo">
+
+            <label>Vendedor</label>
+
+            <select id="vendedorVenta"></select>
+
+        </div>
+
+
+        <div class="campo">
+
+            <label>Producto</label>
+
+            <select id="productoVenta"></select>
+
+        </div>
+
+
+        <div class="campo">
+
+            <label>Cantidad</label>
+
+            <input
+                type="number"
+                id="cantidadVenta"
+                min="1"
+                value="1"
+                inputmode="numeric"
+            >
+
+        </div>
+
+
+        <div class="campo automatico">
+
+            <label>Precio de venta</label>
+
+            <input
+                type="text"
+                id="precioVenta"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="campo automatico">
+
+            <label>Ganancia por unidad</label>
+
+            <input
+                type="text"
+                id="gananciaVenta"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="campo automatico">
+
+            <label>Ganancia total</label>
+
+            <input
+                type="text"
+                id="gananciaTotal"
+                readonly
+            >
+
+        </div>
+
+
+        <div class="campo completo">
+
+            <button
+                class="btn-verde"
+                onclick="registrarVenta()"
+            >
+                + Registrar venta
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- RESUMEN -->
+
+<section class="seccion">
+
+    <h2>Resumen del día</h2>
 
     <div class="resumen">
 
-        <div class="tarjeta">
-            <h3>Productos registrados</h3>
-            <strong id="cantidad-productos">8</strong>
+        <div class="card">
+
+            <span>Unidades vendidas</span>
+
+            <strong id="resumenUnidades">
+                0
+            </strong>
+
         </div>
 
-        <div class="tarjeta">
-            <h3>Ganancia promedio</h3>
-            <strong id="ganancia-promedio">$0</strong>
+
+        <div class="card">
+
+            <span>Dinero vendido</span>
+
+            <strong id="resumenDinero">
+                $0
+            </strong>
+
         </div>
 
-        <div class="tarjeta">
-            <h3>Estado del registro</h3>
-            <strong id="estado-registro">Activo</strong>
+
+        <div class="card">
+
+            <span>Ganancia total</span>
+
+            <strong id="resumenGanancia">
+                $0
+            </strong>
+
         </div>
 
     </div>
 
+</section>
 
-    <footer>
-        Sistema de control interno · Registro de precios y ganancias
-    </footer>
+
+<!-- HISTORIAL -->
+
+<section class="seccion">
+
+    <h2>Historial de ventas</h2>
+
+    <div id="historial"></div>
+
+    <button
+        class="btn-rojo"
+        onclick="borrarHistorial()"
+        style="margin-top:15px;"
+    >
+        Borrar historial completo
+    </button>
+
+</section>
 
 </div>
 
 
+<div id="mensaje" class="mensaje"></div>
+
+
 <script>
 
-    const productos = [
-        "tortafrita",
-        "bollo",
-        "cafe",
-        "ensalada",
-        "bandejitas",
-        "sandwiches",
-        "bonobon",
-        "donas"
-    ];
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
+const KEY_PRODUCTOS = "control_ventas_productos_v10";
+const KEY_VENDEDORES = "control_ventas_vendedores_v10";
+const KEY_VENTAS = "control_ventas_ventas_v10";
 
 
-    function obtenerPrecio(producto) {
+/* =========================================================
+   PRODUCTOS INICIALES
+========================================================= */
 
-        const elemento = document.getElementById("precio-" + producto);
+const productosIniciales = [
 
-        if (!elemento) {
-            return 0;
-        }
+    {
+        id: "tortafrita",
+        nombre: "Tortafrita",
+        precio: 1000,
+        ganancia: 200
+    },
 
-        return Number(elemento.value) || 0;
+    {
+        id: "bollos",
+        nombre: "Bollos",
+        precio: 1000,
+        ganancia: 200
+    },
+
+    {
+        id: "cafe",
+        nombre: "Café",
+        precio: 1000,
+        ganancia: 200
+    },
+
+    {
+        id: "ensalada-frutas",
+        nombre: "Ensaladas de frutas",
+        precio: 3000,
+        ganancia: 500
+    },
+
+    {
+        id: "bandejitas",
+        nombre: "Bandejas de alfajor / cubanitos",
+        precio: 3000,
+        ganancia: 300
+    },
+
+    {
+        id: "sandwiches-miga",
+        nombre: "Sandwiches de miga",
+        precio: 3000,
+        ganancia: 300
+    },
+
+    {
+        id: "bon-o-bon",
+        nombre: "Bon o Bon",
+        precio: 1000,
+        ganancia: 100
+    },
+
+    {
+        id: "donas",
+        nombre: "Donas",
+        precio: 2000,
+        ganancia: 200
     }
 
+];
 
-    function obtenerGanancia(producto) {
 
-        const elemento = document.getElementById("ganancia-" + producto);
+/* =========================================================
+   VENDEDORES
+========================================================= */
 
-        if (!elemento) {
-            return 0;
-        }
+const vendedoresIniciales = [
 
-        return Number(elemento.value) || 0;
+    {
+        id: "tati",
+        nombre: "Tati"
+    },
+
+    {
+        id: "benja",
+        nombre: "Benja"
+    },
+
+    {
+        id: "gabi",
+        nombre: "Gabi"
+    },
+
+    {
+        id: "alan",
+        nombre: "Alan"
+    },
+
+    {
+        id: "lalo",
+        nombre: "Lalo"
     }
 
+];
 
-    function actualizar(producto) {
 
-        const precio = obtenerPrecio(producto);
-        const ganancia = obtenerGanancia(producto);
+/* =========================================================
+   CARGAR PRODUCTOS
+========================================================= */
 
-        const costo = precio - ganancia;
+let productos =
+    JSON.parse(
+        localStorage.getItem(KEY_PRODUCTOS)
+    );
 
-        let porcentaje = 0;
 
-        if (precio > 0) {
-            porcentaje = (ganancia / precio) * 100;
+if (!Array.isArray(productos)) {
+
+    productos =
+        JSON.parse(
+            JSON.stringify(productosIniciales)
+        );
+
+}
+
+
+/*
+   CORREGIR PRODUCTOS EXISTENTES
+
+   Esto es importante porque si tu versión anterior
+   tenía Donas duplicadas o productos con valores vacíos,
+   se arreglan automáticamente.
+*/
+
+function normalizarProductos() {
+
+    const resultado = [];
+    const ids = new Set();
+
+    productos.forEach(producto => {
+
+        if (!producto) return;
+
+        let id = producto.id;
+        let nombre = String(producto.nombre || "").trim();
+
+        if (
+            nombre.toLowerCase() === "donas"
+        ) {
+            id = "donas";
+            nombre = "Donas";
         }
 
-        const costoElemento =
-            document.getElementById("costo-" + producto);
+        if (!id) return;
 
-        const porcentajeElemento =
-            document.getElementById("porcentaje-" + producto);
+        if (ids.has(id)) return;
 
-        if (costoElemento) {
-            costoElemento.textContent =
-                "$" + Math.max(0, costo).toLocaleString("es-AR");
+        ids.add(id);
+
+        const original =
+            productosIniciales.find(
+                p => p.id === id
+            );
+
+        let precio =
+            Number(producto.precio);
+
+        let ganancia =
+            Number(producto.ganancia);
+
+        /*
+           Si el valor anterior estaba vacío,
+           usamos el valor inicial.
+        */
+
+        if (
+            !Number.isFinite(precio) ||
+            precio < 0
+        ) {
+
+            precio =
+                original
+                    ? original.precio
+                    : 0;
+
         }
 
-        if (porcentajeElemento) {
-            porcentajeElemento.textContent =
-                porcentaje.toFixed(1) + "%";
+        if (
+            !Number.isFinite(ganancia) ||
+            ganancia < 0
+        ) {
+
+            ganancia =
+                original
+                    ? original.ganancia
+                    : 0;
+
         }
 
-        guardarAutomaticamente();
-        actualizarResumen();
-    }
+        resultado.push({
 
+            id: id,
 
-    function guardarAutomaticamente() {
+            nombre:
+                nombre ||
+                (original
+                    ? original.nombre
+                    : "Producto"),
 
-        const datos = {};
+            precio: precio,
 
-        productos.forEach(function(producto) {
-
-            datos[producto] = {
-                precio: obtenerPrecio(producto),
-                ganancia: obtenerGanancia(producto)
-            };
+            ganancia: ganancia
 
         });
 
-        localStorage.setItem(
-            "control_ventas_productos",
-            JSON.stringify(datos)
-        );
-
-        mostrarEstado("Cambios guardados automáticamente.");
-    }
-
-
-    function cargarDatos() {
-
-        const datosGuardados =
-            localStorage.getItem("control_ventas_productos");
-
-        if (!datosGuardados) {
-
-            productos.forEach(function(producto) {
-                actualizar(producto);
-            });
-
-            return;
-        }
-
-
-        try {
-
-            const datos = JSON.parse(datosGuardados);
-
-            productos.forEach(function(producto) {
-
-                if (!datos[producto]) {
-                    return;
-                }
-
-                const precio =
-                    document.getElementById("precio-" + producto);
-
-                const ganancia =
-                    document.getElementById("ganancia-" + producto);
-
-
-                if (precio && datos[producto].precio !== undefined) {
-                    precio.value = datos[producto].precio;
-                }
-
-                if (ganancia && datos[producto].ganancia !== undefined) {
-                    ganancia.value = datos[producto].ganancia;
-                }
-
-                actualizar(producto);
-
-            });
-
-            mostrarEstado("Datos cargados correctamente.");
-
-        } catch (error) {
-
-            console.log(error);
-
-        }
-    }
-
-
-    function guardarTodo() {
-
-        guardarAutomaticamente();
-
-        mostrarEstado(
-            "✓ Todos los cambios fueron guardados."
-        );
-    }
-
-
-    function mostrarEstado(texto) {
-
-        const estado =
-            document.getElementById("estado");
-
-        if (estado) {
-            estado.textContent = texto;
-        }
-
-    }
-
-
-    function restaurarDatos() {
-
-        const confirmar = confirm(
-            "¿Querés restaurar los datos iniciales?"
-        );
-
-        if (!confirmar) {
-            return;
-        }
-
-
-        localStorage.removeItem(
-            "control_ventas_productos"
-        );
-
-
-        document.getElementById("precio-tortafrita").value = 0;
-        document.getElementById("ganancia-tortafrita").value = 200;
-
-        document.getElementById("precio-bollo").value = 0;
-        document.getElementById("ganancia-bollo").value = 200;
-
-        document.getElementById("precio-cafe").value = 0;
-        document.getElementById("ganancia-cafe").value = 200;
-
-        document.getElementById("precio-ensalada").value = 0;
-        document.getElementById("ganancia-ensalada").value = 500;
-
-        document.getElementById("precio-bandejitas").value = 0;
-        document.getElementById("ganancia-bandejitas").value = 300;
-
-        document.getElementById("precio-sandwiches").value = 0;
-        document.getElementById("ganancia-sandwiches").value = 300;
-
-        document.getElementById("precio-bonobon").value = 0;
-        document.getElementById("ganancia-bonobon").value = 100;
-
-        document.getElementById("precio-donas").value = 2000;
-        document.getElementById("ganancia-donas").value = 200;
-
-
-        productos.forEach(function(producto) {
-            actualizar(producto);
-        });
-
-
-        mostrarEstado(
-            "Datos restaurados correctamente."
-        );
-    }
-
-
-    function actualizarResumen() {
-
-        let sumaGanancias = 0;
-        let cantidad = 0;
-
-        productos.forEach(function(producto) {
-
-            const ganancia =
-                obtenerGanancia(producto);
-
-            if (ganancia > 0) {
-                sumaGanancias += ganancia;
-            }
-
-            cantidad++;
-
-        });
-
-
-        let promedio = 0;
-
-        if (cantidad > 0) {
-            promedio = sumaGanancias / cantidad;
-        }
-
-
-        document.getElementById(
-            "cantidad-productos"
-        ).textContent = cantidad;
-
-
-        document.getElementById(
-            "ganancia-promedio"
-        ).textContent =
-            "$" + Math.round(promedio).toLocaleString("es-AR");
-
-    }
+    });
 
 
     /*
-        IMPORTANTE:
-
-        Los campos son inputs normales.
-
-        No usamos:
-        - contenteditable
-        - readonly
-        - disabled
-
-        Por eso se pueden editar directamente
-        tocándolos desde un celular.
+       Aseguramos que estén todos los productos
+       iniciales una sola vez.
     */
 
+    productosIniciales.forEach(original => {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function() {
+        const existe =
+            resultado.some(
+                p => p.id === original.id
+            );
 
-            cargarDatos();
+        if (!existe) {
 
-            actualizarResumen();
+            resultado.push(
+                JSON.parse(
+                    JSON.stringify(original)
+                )
+            );
+
+        }
+
+    });
+
+
+    /*
+       Donas siempre queda configurada.
+    */
+
+    const donas =
+        resultado.find(
+            p => p.id === "donas"
+        );
+
+    if (donas) {
+
+        if (
+            !Number.isFinite(
+                Number(donas.precio)
+            )
+        ) {
+            donas.precio = 2000;
+        }
+
+        if (
+            !Number.isFinite(
+                Number(donas.ganancia)
+            )
+        ) {
+            donas.ganancia = 200;
+        }
+
+    }
+
+
+    productos = resultado;
+
+    guardarProductos();
+
+}
+
+
+function guardarProductos() {
+
+    localStorage.setItem(
+        KEY_PRODUCTOS,
+        JSON.stringify(productos)
+    );
+
+}
+
+
+/* =========================================================
+   VENDEDORES
+========================================================= */
+
+let vendedores =
+    JSON.parse(
+        localStorage.getItem(KEY_VENDEDORES)
+    );
+
+
+if (
+    !Array.isArray(vendedores) ||
+    vendedores.length === 0
+) {
+
+    vendedores =
+        JSON.parse(
+            JSON.stringify(vendedoresIniciales)
+        );
+
+    guardarVendedores();
+
+}
+
+
+function guardarVendedores() {
+
+    localStorage.setItem(
+        KEY_VENDEDORES,
+        JSON.stringify(vendedores)
+    );
+
+}
+
+
+/* =========================================================
+   VENTAS
+========================================================= */
+
+let ventas =
+    JSON.parse(
+        localStorage.getItem(KEY_VENTAS)
+    );
+
+
+if (!Array.isArray(ventas)) {
+
+    ventas = [];
+
+}
+
+
+function guardarVentas() {
+
+    localStorage.setItem(
+        KEY_VENTAS,
+        JSON.stringify(ventas)
+    );
+
+}
+
+
+/* =========================================================
+   UTILIDADES
+========================================================= */
+
+function pesos(numero) {
+
+    return new Intl.NumberFormat(
+        "es-AR",
+        {
+            style: "currency",
+            currency: "ARS",
+            maximumFractionDigits: 0
+        }
+    ).format(
+        Number(numero) || 0
+    );
+
+}
+
+
+function mostrarMensaje(texto) {
+
+    const elemento =
+        document.getElementById("mensaje");
+
+    elemento.textContent = texto;
+
+    elemento.style.display = "block";
+
+    clearTimeout(
+        mostrarMensaje.timer
+    );
+
+    mostrarMensaje.timer =
+        setTimeout(() => {
+
+            elemento.style.display =
+                "none";
+
+        }, 1800);
+
+}
+
+
+/* =========================================================
+   RENDER PRODUCTOS
+========================================================= */
+
+function renderProductos() {
+
+    const tabla =
+        document.getElementById(
+            "tablaProductos"
+        );
+
+    tabla.innerHTML = "";
+
+
+    productos.forEach(producto => {
+
+        const fila =
+            document.createElement("tr");
+
+
+        /*
+           NOMBRE
+        */
+
+        const celdaNombre =
+            document.createElement("td");
+
+        celdaNombre.className =
+            "nombre-producto";
+
+        celdaNombre.textContent =
+            producto.nombre;
+
+
+        /*
+           PRECIO
+        */
+
+        const celdaPrecio =
+            document.createElement("td");
+
+        const inputPrecio =
+            document.createElement("input");
+
+        inputPrecio.type = "number";
+
+        inputPrecio.className =
+            "precio-editable";
+
+        inputPrecio.value =
+            producto.precio;
+
+        inputPrecio.min = "0";
+
+        inputPrecio.step = "1";
+
+        inputPrecio.inputMode =
+            "numeric";
+
+        inputPrecio.autocomplete =
+            "off";
+
+        /*
+           MUY IMPORTANTE:
+           NO usamos oninput para no
+           destruir el foco del celular.
+        */
+
+        inputPrecio.addEventListener(
+            "change",
+            function() {
+
+                guardarPrecio(
+                    producto.id,
+                    this.value
+                );
+
+            }
+        );
+
+        inputPrecio.addEventListener(
+            "blur",
+            function() {
+
+                guardarPrecio(
+                    producto.id,
+                    this.value
+                );
+
+            }
+        );
+
+
+        celdaPrecio.appendChild(
+            inputPrecio
+        );
+
+
+        /*
+           GANANCIA
+        */
+
+        const celdaGanancia =
+            document.createElement("td");
+
+        const inputGanancia =
+            document.createElement("input");
+
+        inputGanancia.type = "number";
+
+        inputGanancia.className =
+            "ganancia-editable";
+
+        inputGanancia.value =
+            producto.ganancia;
+
+        inputGanancia.min = "0";
+
+        inputGanancia.step = "1";
+
+        inputGanancia.inputMode =
+            "numeric";
+
+        inputGanancia.autocomplete =
+            "off";
+
+
+        inputGanancia.addEventListener(
+            "change",
+            function() {
+
+                guardarGanancia(
+                    producto.id,
+                    this.value
+                );
+
+            }
+        );
+
+        inputGanancia.addEventListener(
+            "blur",
+            function() {
+
+                guardarGanancia(
+                    producto.id,
+                    this.value
+                );
+
+            }
+        );
+
+
+        celdaGanancia.appendChild(
+            inputGanancia
+        );
+
+
+        /*
+           ESTADO
+        */
+
+        const celdaEstado =
+            document.createElement("td");
+
+        celdaEstado.innerHTML =
+            '<span class="estado">EDITABLE</span>';
+
+
+        fila.appendChild(
+            celdaNombre
+        );
+
+        fila.appendChild(
+            celdaPrecio
+        );
+
+        fila.appendChild(
+            celdaGanancia
+        );
+
+        fila.appendChild(
+            celdaEstado
+        );
+
+
+        tabla.appendChild(
+            fila
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   GUARDAR PRECIO
+========================================================= */
+
+function guardarPrecio(
+    productoId,
+    valor
+) {
+
+    const producto =
+        productos.find(
+            p => p.id === productoId
+        );
+
+    if (!producto) return;
+
+
+    let numero =
+        Number(
+            String(valor)
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(numero) ||
+        numero < 0
+    ) {
+
+        numero = 0;
+
+    }
+
+
+    producto.precio =
+        numero;
+
+
+    guardarProductos();
+
+    actualizarVentaSeleccionada();
+
+    mostrarMensaje(
+        "Precio guardado"
+    );
+
+}
+
+
+/* =========================================================
+   GUARDAR GANANCIA
+========================================================= */
+
+function guardarGanancia(
+    productoId,
+    valor
+) {
+
+    const producto =
+        productos.find(
+            p => p.id === productoId
+        );
+
+    if (!producto) return;
+
+
+    let numero =
+        Number(
+            String(valor)
+                .replace(/\./g, "")
+                .replace(",", ".")
+        );
+
+
+    if (
+        !Number.isFinite(numero) ||
+        numero < 0
+    ) {
+
+        numero = 0;
+
+    }
+
+
+    producto.ganancia =
+        numero;
+
+
+    guardarProductos();
+
+    actualizarVentaSeleccionada();
+
+    mostrarMensaje(
+        "Ganancia guardada"
+    );
+
+}
+
+
+/* =========================================================
+   VENDEDORES EN SELECT
+========================================================= */
+
+function renderVendedores() {
+
+    const select =
+        document.getElementById(
+            "vendedorVenta"
+        );
+
+    select.innerHTML = "";
+
+
+    vendedores.forEach(vendedor => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            vendedor.id;
+
+        option.textContent =
+            vendedor.nombre;
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   PRODUCTOS EN SELECT
+========================================================= */
+
+function renderSelectProductos() {
+
+    const select =
+        document.getElementById(
+            "productoVenta"
+        );
+
+    select.innerHTML = "";
+
+
+    productos.forEach(producto => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            producto.id;
+
+        option.textContent =
+            producto.nombre;
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+
+    actualizarVentaSeleccionada();
+
+}
+
+
+/* =========================================================
+   ACTUALIZAR DATOS DE VENTA
+========================================================= */
+
+function actualizarVentaSeleccionada() {
+
+    const select =
+        document.getElementById(
+            "productoVenta"
+        );
+
+    if (!select) return;
+
+
+    const producto =
+        productos.find(
+            p => p.id === select.value
+        );
+
+
+    if (!producto) return;
+
+
+    document.getElementById(
+        "precioVenta"
+    ).value =
+        pesos(producto.precio);
+
+
+    document.getElementById(
+        "gananciaVenta"
+    ).value =
+        pesos(producto.ganancia);
+
+
+    calcularGananciaVenta();
+
+}
+
+
+/* =========================================================
+   CALCULAR GANANCIA
+========================================================= */
+
+function calcularGananciaVenta() {
+
+    const select =
+        document.getElementById(
+            "productoVenta"
+        );
+
+    const cantidad =
+        Number(
+            document.getElementById(
+                "cantidadVenta"
+            ).value
+        ) || 0;
+
+
+    const producto =
+        productos.find(
+            p => p.id === select.value
+        );
+
+
+    if (!producto) return;
+
+
+    document.getElementById(
+        "gananciaTotal"
+    ).value =
+        pesos(
+            producto.ganancia *
+            cantidad
+        );
+
+}
+
+
+/* =========================================================
+   REGISTRAR VENTA
+========================================================= */
+
+function registrarVenta() {
+
+    const vendedorId =
+        document.getElementById(
+            "vendedorVenta"
+        ).value;
+
+    const productoId =
+        document.getElementById(
+            "productoVenta"
+        ).value;
+
+    const cantidad =
+        Number(
+            document.getElementById(
+                "cantidadVenta"
+            ).value
+        );
+
+
+    if (
+        !cantidad ||
+        cantidad <= 0
+    ) {
+
+        alert(
+            "Ingresá una cantidad válida."
+        );
+
+        return;
+
+    }
+
+
+    const vendedor =
+        vendedores.find(
+            v => v.id === vendedorId
+        );
+
+    const producto =
+        productos.find(
+            p => p.id === productoId
+        );
+
+
+    if (
+        !vendedor ||
+        !producto
+    ) {
+
+        return;
+
+    }
+
+
+    const venta = {
+
+        id:
+            Date.now() +
+            "_" +
+            Math.random()
+                .toString(36)
+                .slice(2),
+
+        fecha:
+            document.getElementById(
+                "fecha"
+            ).value,
+
+        vendedorId:
+            vendedor.id,
+
+        vendedor:
+            vendedor.nombre,
+
+        productoId:
+            producto.id,
+
+        producto:
+            producto.nombre,
+
+        cantidad:
+            cantidad,
+
+        precio:
+            Number(producto.precio),
+
+        ganancia:
+            Number(producto.ganancia),
+
+        total:
+            Number(producto.precio) *
+            cantidad,
+
+        gananciaTotal:
+            Number(producto.ganancia) *
+            cantidad
+
+    };
+
+
+    ventas.push(
+        venta
+    );
+
+
+    guardarVentas();
+
+    document.getElementById(
+        "cantidadVenta"
+    ).value = 1;
+
+
+    renderVentas();
+
+    renderHistorial();
+
+    actualizarResumen();
+
+    calcularGananciaVenta();
+
+    mostrarMensaje(
+        "Venta registrada correctamente"
+    );
+
+}
+
+
+/* =========================================================
+   TABLA DE VENTAS
+========================================================= */
+
+function renderVentas() {
+
+    const tabla =
+        document.getElementById(
+            "tablaVentas"
+        );
+
+    tabla.innerHTML = "";
+
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    const ventasDelDia =
+        ventas.filter(
+            v => v.fecha === fecha
+        );
+
+
+    ventasDelDia.forEach(venta => {
+
+        const fila =
+            document.createElement("tr");
+
+
+        fila.innerHTML = `
+
+            <td>
+                ${venta.vendedor}
+            </td>
+
+            <td>
+                ${venta.producto}
+            </td>
+
+            <td>
+                ${venta.cantidad}
+            </td>
+
+            <td>
+                ${pesos(venta.precio)}
+            </td>
+
+            <td>
+                ${pesos(venta.gananciaTotal)}
+            </td>
+
+            <td>
+                ${pesos(venta.total)}
+            </td>
+
+        `;
+
+
+        tabla.appendChild(
+            fila
+        );
+
+    });
+
+
+    actualizarResumen();
+
+}
+
+
+/* =========================================================
+   RESUMEN
+========================================================= */
+
+function actualizarResumen() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    const lista =
+        ventas.filter(
+            v => v.fecha === fecha
+        );
+
+
+    let unidades = 0;
+    let dinero = 0;
+    let ganancia = 0;
+
+
+    lista.forEach(v => {
+
+        unidades +=
+            Number(v.cantidad) || 0;
+
+        dinero +=
+            Number(v.total) || 0;
+
+        ganancia +=
+            Number(v.gananciaTotal) || 0;
+
+    });
+
+
+    document.getElementById(
+        "resumenUnidades"
+    ).textContent =
+        unidades;
+
+
+    document.getElementById(
+        "resumenDinero"
+    ).textContent =
+        pesos(dinero);
+
+
+    document.getElementById(
+        "resumenGanancia"
+    ).textContent =
+        pesos(ganancia);
+
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+function renderHistorial() {
+
+    const contenedor =
+        document.getElementById(
+            "historial"
+        );
+
+
+    if (ventas.length === 0) {
+
+        contenedor.innerHTML =
+            '<p style="color:#777;">Todavía no hay ventas registradas.</p>';
+
+        return;
+
+    }
+
+
+    const ordenadas =
+        [...ventas].reverse();
+
+
+    let html = "";
+
+
+    ordenadas.forEach(venta => {
+
+        html += `
+
+        <div style="
+            border:1px solid #ddd;
+            padding:12px;
+            border-radius:7px;
+            margin-bottom:8px;
+            background:#fafafa;
+        ">
+
+            <strong>
+                ${venta.producto}
+            </strong>
+
+            <br>
+
+            Vendedor:
+            ${venta.vendedor}
+
+            <br>
+
+            Cantidad:
+            ${venta.cantidad}
+
+            <br>
+
+            Total:
+            <strong>
+                ${pesos(venta.total)}
+            </strong>
+
+            <br>
+
+            Ganancia:
+            <strong>
+                ${pesos(venta.gananciaTotal)}
+            </strong>
+
+            <br>
+
+            <small style="color:#777;">
+                ${venta.fecha}
+            </small>
+
+        </div>
+
+        `;
+
+    });
+
+
+    contenedor.innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   AGREGAR PRODUCTO
+========================================================= */
+
+function agregarProducto() {
+
+    const nombre =
+        prompt(
+            "Nombre del nuevo producto:"
+        );
+
+
+    if (!nombre || !nombre.trim()) {
+        return;
+    }
+
+
+    const precio =
+        Number(
+            prompt(
+                "Precio de venta:"
+            )
+        );
+
+
+    const ganancia =
+        Number(
+            prompt(
+                "Ganancia por unidad:"
+            )
+        );
+
+
+    productos.push({
+
+        id:
+            "producto_" +
+            Date.now(),
+
+        nombre:
+            nombre.trim(),
+
+        precio:
+            Number.isFinite(precio)
+                ? precio
+                : 0,
+
+        ganancia:
+            Number.isFinite(ganancia)
+                ? ganancia
+                : 0
+
+    });
+
+
+    guardarProductos();
+
+    renderProductos();
+
+    renderSelectProductos();
+
+    mostrarMensaje(
+        "Producto agregado"
+    );
+
+}
+
+
+/* =========================================================
+   ELIMINAR PRODUCTO
+========================================================= */
+
+function eliminarProducto() {
+
+    if (productos.length <= 1) {
+
+        alert(
+            "Debe quedar al menos un producto."
+        );
+
+        return;
+
+    }
+
+
+    let texto =
+        "Seleccioná el producto:\n\n";
+
+
+    productos.forEach(
+        (producto, indice) => {
+
+            texto +=
+                `${indice + 1}. ${producto.nombre}\n`;
 
         }
     );
+
+
+    const respuesta =
+        prompt(
+            texto +
+            "\nEscribí el número:"
+        );
+
+
+    if (respuesta === null) {
+        return;
+    }
+
+
+    const indice =
+        Number(respuesta) - 1;
+
+
+    if (
+        indice < 0 ||
+        indice >= productos.length
+    ) {
+
+        alert(
+            "Número inválido."
+        );
+
+        return;
+
+    }
+
+
+    const producto =
+        productos[indice];
+
+
+    if (
+        !confirm(
+            `¿Eliminar "${producto.nombre}"?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    productos.splice(
+        indice,
+        1
+    );
+
+
+    guardarProductos();
+
+    renderProductos();
+
+    renderSelectProductos();
+
+    mostrarMensaje(
+        "Producto eliminado"
+    );
+
+}
+
+
+/* =========================================================
+   AGREGAR VENDEDOR
+========================================================= */
+
+function agregarVendedor() {
+
+    const nombre =
+        prompt(
+            "Nombre del vendedor:"
+        );
+
+
+    if (
+        !nombre ||
+        !nombre.trim()
+    ) {
+
+        return;
+
+    }
+
+
+    vendedores.push({
+
+        id:
+            "vendedor_" +
+            Date.now(),
+
+        nombre:
+            nombre.trim()
+
+    });
+
+
+    guardarVendedores();
+
+    renderVendedores();
+
+    mostrarMensaje(
+        "Vendedor agregado"
+    );
+
+}
+
+
+/* =========================================================
+   ELIMINAR VENDEDOR
+========================================================= */
+
+function eliminarVendedor() {
+
+    if (vendedores.length <= 1) {
+
+        alert(
+            "Debe quedar al menos un vendedor."
+        );
+
+        return;
+
+    }
+
+
+    let texto =
+        "Seleccioná el vendedor:\n\n";
+
+
+    vendedores.forEach(
+        (vendedor, indice) => {
+
+            texto +=
+                `${indice + 1}. ${vendedor.nombre}\n`;
+
+        }
+    );
+
+
+    const respuesta =
+        prompt(
+            texto +
+            "\nEscribí el número:"
+        );
+
+
+    if (respuesta === null) {
+        return;
+    }
+
+
+    const indice =
+        Number(respuesta) - 1;
+
+
+    if (
+        indice < 0 ||
+        indice >= vendedores.length
+    ) {
+
+        alert(
+            "Número inválido."
+        );
+
+        return;
+
+    }
+
+
+    const vendedor =
+        vendedores[indice];
+
+
+    if (
+        !confirm(
+            `¿Eliminar a "${vendedor.nombre}"?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    vendedores.splice(
+        indice,
+        1
+    );
+
+
+    guardarVendedores();
+
+    renderVendedores();
+
+    mostrarMensaje(
+        "Vendedor eliminado"
+    );
+
+}
+
+
+/* =========================================================
+   BORRAR VENTAS DEL DÍA
+========================================================= */
+
+function borrarVentas() {
+
+    const fecha =
+        document.getElementById(
+            "fecha"
+        ).value;
+
+
+    if (
+        !confirm(
+            "¿Querés borrar todas las ventas de este día?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    ventas =
+        ventas.filter(
+            v => v.fecha !== fecha
+        );
+
+
+    guardarVentas();
+
+    renderVentas();
+
+    renderHistorial();
+
+    actualizarResumen();
+
+    mostrarMensaje(
+        "Ventas del día borradas"
+    );
+
+}
+
+
+/* =========================================================
+   BORRAR HISTORIAL
+========================================================= */
+
+function borrarHistorial() {
+
+    if (
+        !confirm(
+            "¿Querés borrar TODO el historial?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    ventas = [];
+
+    guardarVentas();
+
+    renderVentas();
+
+    renderHistorial();
+
+    actualizarResumen();
+
+    mostrarMensaje(
+        "Historial borrado"
+    );
+
+}
+
+
+/* =========================================================
+   GUARDAR TODO
+========================================================= */
+
+function guardarTodo() {
+
+    guardarProductos();
+
+    guardarVendedores();
+
+    guardarVentas();
+
+    mostrarMensaje(
+        "Todos los datos fueron guardados"
+    );
+
+}
+
+
+/* =========================================================
+   INICIALIZACIÓN
+========================================================= */
+
+function iniciar() {
+
+    /*
+       Primero corregimos productos viejos.
+    */
+
+    normalizarProductos();
+
+
+    /*
+       Fecha actual.
+    */
+
+    const ahora =
+        new Date();
+
+
+    const año =
+        ahora.getFullYear();
+
+    const mes =
+        String(
+            ahora.getMonth() + 1
+        ).padStart(2, "0");
+
+    const dia =
+        String(
+            ahora.getDate()
+        ).padStart(2, "0");
+
+
+    document.getElementById(
+        "fecha"
+    ).value =
+        `${año}-${mes}-${dia}`;
+
+
+    renderProductos();
+
+    renderVendedores();
+
+    renderSelectProductos();
+
+    renderVentas();
+
+    renderHistorial();
+
+    actualizarResumen();
+
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+document.getElementById(
+    "productoVenta"
+).addEventListener(
+    "change",
+    actualizarVentaSeleccionada
+);
+
+
+document.getElementById(
+    "cantidadVenta"
+).addEventListener(
+    "input",
+    calcularGananciaVenta
+);
+
+
+document.getElementById(
+    "fecha"
+).addEventListener(
+    "change",
+    function() {
+
+        renderVentas();
+
+        actualizarResumen();
+
+    }
+);
+
+
+/*
+   Evitamos que Enter envíe cosas
+   accidentalmente en el celular.
+*/
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" &&
+            event.target.matches(
+                ".precio-editable, .ganancia-editable"
+            )
+        ) {
+
+            event.preventDefault();
+
+            event.target.blur();
+
+        }
+
+    }
+);
+
+
+/* ARRANCAR */
+
+iniciar();
 
 </script>
 
 </body>
 </html>
-```
