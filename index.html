@@ -2065,7 +2065,8 @@
 
     function cambiarPrecioProducto(
         productoId,
-        valor
+        valor,
+        formatear = true
     ) {
 
         const producto =
@@ -2086,9 +2087,10 @@
 
         guardarProductos();
 
-        renderPrecios();
-
-        renderReventa();
+        if (formatear) {
+            const input = document.querySelector(`.precio-input[data-id="${productoId}"][data-tipo="precio"]`);
+            if (input) input.value = String(producto.precio);
+        }
 
         actualizarCobroAutomatico();
     }
@@ -2096,7 +2098,8 @@
 
     function cambiarGananciaProducto(
         productoId,
-        valor
+        valor,
+        formatear = true
     ) {
 
         const producto =
@@ -2117,7 +2120,10 @@
 
         guardarProductos();
 
-        renderPrecios();
+        if (formatear) {
+            const input = document.querySelector(`.ganancia-input[data-id="${productoId}"][data-tipo="ganancia"]`);
+            if (input) input.value = String(producto.ganancia);
+        }
 
         actualizarCobroAutomatico();
     }
@@ -3668,10 +3674,8 @@
                     <td>
 
                         <input
-                            type="number"
+                            type="text"
                             class="precio-input"
-                            min="0"
-                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.precio)}"
@@ -3685,10 +3689,8 @@
                     <td>
 
                         <input
-                            type="number"
+                            type="text"
                             class="ganancia-input"
-                            min="0"
-                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.ganancia)}"
@@ -3721,30 +3723,29 @@
                     );
 
 
-                inputPrecio.addEventListener(
-                    "change",
-                    function() {
+                inputPrecio.addEventListener("input", function() {
+                    cambiarPrecioProducto(producto.id, this.value, false);
+                });
 
-                        cambiarPrecioProducto(
-                            producto.id,
-                            this.value
-                        );
+                inputPrecio.addEventListener("blur", function() {
+                    cambiarPrecioProducto(producto.id, this.value, true);
+                });
 
-                    }
-                );
+                inputGanancia.addEventListener("input", function() {
+                    cambiarGananciaProducto(producto.id, this.value, false);
+                });
 
+                inputGanancia.addEventListener("blur", function() {
+                    cambiarGananciaProducto(producto.id, this.value, true);
+                });
 
-                inputGanancia.addEventListener(
-                    "change",
-                    function() {
-
-                        cambiarGananciaProducto(
-                            producto.id,
-                            this.value
-                        );
-
-                    }
-                );
+                [inputPrecio, inputGanancia].forEach(input => {
+                    input.addEventListener("keydown", function(e) {
+                        if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    });
+                });
 
 
                 tbody.appendChild(
@@ -3807,10 +3808,8 @@
                     <td>
 
                         <input
-                            type="number"
+                            type="text"
                             class="precio-input"
-                            min="0"
-                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${tieneReventa ? numeroArgentino(valor) : "0"}"
