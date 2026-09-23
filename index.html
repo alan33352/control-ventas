@@ -456,26 +456,6 @@
             font-weight: 700;
         }
 
-        /* Campos de precio y ganancia: editables también con táctil */
-        .precio-input,
-        .ganancia-input {
-            -webkit-appearance: none;
-            appearance: none;
-            -webkit-user-select: text;
-            user-select: text;
-            -webkit-touch-callout: default;
-            touch-action: manipulation;
-            pointer-events: auto;
-            cursor: text;
-        }
-
-        .precio-input:focus,
-        .ganancia-input:focus {
-            outline: 2px solid #5f765f;
-            outline-offset: 1px;
-            background: #fffef5;
-        }
-
         .producto-activo {
             display: inline-flex;
             padding: 5px 8px;
@@ -654,7 +634,35 @@
 
         }
 
-    </style>
+    
+        /* Campos de precios editables en celular y computadora */
+        .precio-input, .ganancia-input {
+            width: 150px !important;
+            min-height: 48px !important;
+            box-sizing: border-box;
+            font-size: 17px !important;
+            padding: 10px !important;
+            background: #fff !important;
+            color: #111 !important;
+            border: 2px solid #7b8f78 !important;
+            cursor: text !important;
+            pointer-events: auto !important;
+            user-select: text !important;
+            -webkit-user-select: text !important;
+            touch-action: manipulation !important;
+        }
+        .precio-input:focus, .ganancia-input:focus {
+            outline: 2px solid #526b50 !important;
+            background: #fffef5 !important;
+        }
+        @media (max-width: 700px) {
+            .precio-input, .ganancia-input {
+                width: 125px !important;
+                min-height: 50px !important;
+                font-size: 18px !important;
+            }
+        }
+</style>
 
 </head>
 
@@ -1879,10 +1887,10 @@
                 "Donas",
 
             precio:
-                2000,
+                0,
 
             ganancia:
-                200
+                0
 
         });
     }
@@ -3660,8 +3668,11 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="precio-input"
+                            min="0"
+                            step="1"
+                            autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.precio)}"
                             data-tipo="precio"
@@ -3674,8 +3685,11 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="ganancia-input"
+                            min="0"
+                            step="1"
+                            autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.ganancia)}"
                             data-tipo="ganancia"
@@ -3707,26 +3721,30 @@
                     );
 
 
-                // change + blur funcionan mejor en celular y computadora.
-                const guardarPrecio = function() {
-                    cambiarPrecioProducto(
-                        producto.id,
-                        this.value
-                    );
-                };
+                inputPrecio.addEventListener(
+                    "change",
+                    function() {
 
-                const guardarGanancia = function() {
-                    cambiarGananciaProducto(
-                        producto.id,
-                        this.value
-                    );
-                };
+                        cambiarPrecioProducto(
+                            producto.id,
+                            this.value
+                        );
 
-                inputPrecio.addEventListener("change", guardarPrecio);
-                inputPrecio.addEventListener("blur", guardarPrecio);
+                    }
+                );
 
-                inputGanancia.addEventListener("change", guardarGanancia);
-                inputGanancia.addEventListener("blur", guardarGanancia);
+
+                inputGanancia.addEventListener(
+                    "change",
+                    function() {
+
+                        cambiarGananciaProducto(
+                            producto.id,
+                            this.value
+                        );
+
+                    }
+                );
 
 
                 tbody.appendChild(
@@ -3789,8 +3807,11 @@
                     <td>
 
                         <input
-                            type="text"
+                            type="number"
                             class="precio-input"
+                            min="0"
+                            step="1"
+                            autocomplete="off"
                             inputmode="numeric"
                             value="${tieneReventa ? numeroArgentino(valor) : "0"}"
                             data-reventa-id="${producto.id}"
