@@ -786,7 +786,8 @@
 
             <div class="ayuda-automatica">
 
-                La cantidad llevada se carga automáticamente. Podés modificar el precio de venta y la ganancia por unidad de cualquier producto.
+                La cantidad llevada y la ganancia por unidad se cargan automáticamente.
+                En el caso de Donas podés modificar el precio y la ganancia directamente.
 
             </div>
 
@@ -2064,8 +2065,7 @@
 
     function cambiarPrecioProducto(
         productoId,
-        valor,
-        formatear = true
+        valor
     ) {
 
         const producto =
@@ -2086,10 +2086,9 @@
 
         guardarProductos();
 
-        if (formatear) {
-            const input = document.querySelector(`.precio-input[data-id="${productoId}"][data-tipo="precio"]`);
-            if (input) input.value = String(producto.precio);
-        }
+        renderPrecios();
+
+        renderReventa();
 
         actualizarCobroAutomatico();
     }
@@ -2097,8 +2096,7 @@
 
     function cambiarGananciaProducto(
         productoId,
-        valor,
-        formatear = true
+        valor
     ) {
 
         const producto =
@@ -2119,10 +2117,7 @@
 
         guardarProductos();
 
-        if (formatear) {
-            const input = document.querySelector(`.ganancia-input[data-id="${productoId}"][data-tipo="ganancia"]`);
-            if (input) input.value = String(producto.ganancia);
-        }
+        renderPrecios();
 
         actualizarCobroAutomatico();
     }
@@ -2906,13 +2901,62 @@
         }
 
 
-        // Precio y ganancia son editables para TODOS los productos.
-        cobroPrecio.removeAttribute("readonly");
-        cobroGananciaUnidad.removeAttribute("readonly");
-        cobroPrecio.disabled = false;
-        cobroGananciaUnidad.disabled = false;
-        campoCobroPrecio.classList.remove("campo-automatico");
-        campoCobroGananciaUnidad.classList.remove("campo-automatico");
+        const esDona =
+            datos.productoId ===
+            "donas";
+
+
+        if (esDona) {
+
+            cobroPrecio.removeAttribute(
+                "readonly"
+            );
+
+            cobroGananciaUnidad.removeAttribute(
+                "readonly"
+            );
+
+            cobroPrecio.disabled =
+                false;
+
+            cobroGananciaUnidad.disabled =
+                false;
+
+            campoCobroPrecio.classList.remove(
+                "campo-automatico"
+            );
+
+            campoCobroGananciaUnidad.classList.remove(
+                "campo-automatico"
+            );
+
+        } else {
+
+            cobroPrecio.setAttribute(
+                "readonly",
+                "readonly"
+            );
+
+            cobroGananciaUnidad.setAttribute(
+                "readonly",
+                "readonly"
+            );
+
+            cobroPrecio.disabled =
+                false;
+
+            cobroGananciaUnidad.disabled =
+                false;
+
+            campoCobroPrecio.classList.add(
+                "campo-automatico"
+            );
+
+            campoCobroGananciaUnidad.classList.add(
+                "campo-automatico"
+            );
+
+        }
 
 
         const llevada =
@@ -2960,8 +3004,31 @@
             );
 
 
-        cobroPrecio.value = numeroArgentino(datos.precio);
-        cobroGananciaUnidad.value = numeroArgentino(datos.gananciaUnidad);
+        if (esDona) {
+
+            cobroPrecio.value =
+                numeroArgentino(
+                    datos.precio
+                );
+
+            cobroGananciaUnidad.value =
+                numeroArgentino(
+                    datos.gananciaUnidad
+                );
+
+        } else {
+
+            cobroPrecio.value =
+                formatoPesos(
+                    datos.precio
+                );
+
+            cobroGananciaUnidad.value =
+                formatoPesos(
+                    datos.gananciaUnidad
+                );
+
+        }
 
 
         cobroDinero.value =
@@ -3603,6 +3670,8 @@
                         <input
                             type="text"
                             class="precio-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.precio)}"
@@ -3618,6 +3687,8 @@
                         <input
                             type="text"
                             class="ganancia-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${numeroArgentino(producto.ganancia)}"
@@ -3650,30 +3721,29 @@
                     );
 
 
-                inputPrecio.addEventListener("input", function() {
-                    cambiarPrecioProducto(producto.id, this.value, false);
-                });
+                const guardarCampo = (tipo, id, valor) => {
+                    const p = productos.find(x => x.id === id);
+                    if (!p) return;
+                    const numero = limpiarNumero(valor);
+                    if (tipo === "precio") p.precio = numero;
+                    if (tipo === "ganancia") p.ganancia = numero;
+                    guardarProductos();
+                    actualizarCobroAutomatico();
+                };
 
-                inputPrecio.addEventListener("blur", function() {
-                    cambiarPrecioProducto(producto.id, this.value, true);
+                inputPrecio.addEventListener("input", function() {
+                    guardarCampo("precio", producto.id, this.value);
+                });
+                inputPrecio.addEventListener("change", function() {
+                    guardarCampo("precio", producto.id, this.value);
                 });
 
                 inputGanancia.addEventListener("input", function() {
-                    cambiarGananciaProducto(producto.id, this.value, false);
+                    guardarCampo("ganancia", producto.id, this.value);
                 });
-
-                inputGanancia.addEventListener("blur", function() {
-                    cambiarGananciaProducto(producto.id, this.value, true);
+                inputGanancia.addEventListener("change", function() {
+                    guardarCampo("ganancia", producto.id, this.value);
                 });
-
-                [inputPrecio, inputGanancia].forEach(input => {
-                    input.addEventListener("keydown", function(e) {
-                        if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
-                            e.preventDefault();
-                        }
-                    });
-                });
-
 
                 tbody.appendChild(
                     tr
@@ -3737,6 +3807,8 @@
                         <input
                             type="text"
                             class="precio-input"
+                            min="0"
+                            step="1"
                             autocomplete="off"
                             inputmode="numeric"
                             value="${tieneReventa ? numeroArgentino(valor) : "0"}"
@@ -4833,58 +4905,230 @@
     ========================================================= */
 
 
-    cobroPrecio.addEventListener("input", function() {
-        this.value = this.value.replace(/[^0-9]/g, "");
-        const precio = limpiarNumero(this.value);
-        const datos = obtenerDatosCobroActual();
-        if (!datos) return;
-        const producto = productos.find(p => p.id === datos.productoId);
-        if (producto) {
-            producto.precio = precio;
-            guardarProductos();
+    cobroPrecio.addEventListener(
+        "input",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
+
+
+            this.value =
+                this.value.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+            const precio =
+                limpiarNumero(
+                    this.value
+                );
+
+
+            const datos =
+                obtenerDatosCobroActual();
+
+
+            if (!datos) {
+                return;
+            }
+
+
+            const sobrante =
+                Math.max(
+                    0,
+                    Math.floor(
+                        limpiarNumero(
+                            cobroSobrante.value
+                        )
+                    )
+                );
+
+
+            const vendido =
+                Math.max(
+                    0,
+                    datos.llevada -
+                    sobrante
+                );
+
+
+            cobroDinero.value =
+                formatoPesos(
+                    vendido *
+                    precio
+                );
+
         }
-        actualizarCobroAutomatico();
-    });
+    );
 
 
-    cobroPrecio.addEventListener("change", function() {
-        const datos = obtenerDatosCobroActual();
-        if (!datos) return;
-        cambiarPrecioProducto(datos.productoId, this.value);
-        actualizarCobroAutomatico();
-    });
+    cobroPrecio.addEventListener(
+        "change",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
 
 
-    cobroGananciaUnidad.addEventListener("input", function() {
-        this.value = this.value.replace(/[^0-9]/g, "");
-        const ganancia = limpiarNumero(this.value);
-        const datos = obtenerDatosCobroActual();
-        if (!datos) return;
-        const producto = productos.find(p => p.id === datos.productoId);
-        if (producto) {
-            producto.ganancia = ganancia;
-            guardarProductos();
+            cambiarPrecioProducto(
+                "donas",
+                this.value
+            );
+
+
+            actualizarCobroAutomatico();
+
         }
-        actualizarCobroAutomatico();
-    });
+    );
 
 
-    cobroGananciaUnidad.addEventListener("change", function() {
-        const datos = obtenerDatosCobroActual();
-        if (!datos) return;
-        cambiarGananciaProducto(datos.productoId, this.value);
-        actualizarCobroAutomatico();
-    });
+    cobroGananciaUnidad.addEventListener(
+        "input",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
 
 
-    cobroPrecio.addEventListener("focus", function() {
-        setTimeout(() => this.select(), 50);
-    });
+            this.value =
+                this.value.replace(
+                    /[^0-9]/g,
+                    ""
+                );
 
 
-    cobroGananciaUnidad.addEventListener("focus", function() {
-        setTimeout(() => this.select(), 50);
-    });
+            const ganancia =
+                limpiarNumero(
+                    this.value
+                );
+
+
+            const datos =
+                obtenerDatosCobroActual();
+
+
+            if (!datos) {
+                return;
+            }
+
+
+            const sobrante =
+                Math.max(
+                    0,
+                    Math.floor(
+                        limpiarNumero(
+                            cobroSobrante.value
+                        )
+                    )
+                );
+
+
+            const vendido =
+                Math.max(
+                    0,
+                    datos.llevada -
+                    sobrante
+                );
+
+
+            cobroGanancia.value =
+                formatoPesos(
+                    vendido *
+                    ganancia
+                );
+
+        }
+    );
+
+
+    cobroGananciaUnidad.addEventListener(
+        "change",
+        function() {
+
+            if (
+                cobroProducto.value !==
+                "donas"
+            ) {
+
+                return;
+            }
+
+
+            cambiarGananciaProducto(
+                "donas",
+                this.value
+            );
+
+
+            actualizarCobroAutomatico();
+
+        }
+    );
+
+
+    cobroPrecio.addEventListener(
+        "focus",
+        function() {
+
+            if (
+                cobroProducto.value ===
+                "donas"
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        this.select();
+
+                    },
+                    50
+                );
+
+            }
+
+        }
+    );
+
+
+    cobroGananciaUnidad.addEventListener(
+        "focus",
+        function() {
+
+            if (
+                cobroProducto.value ===
+                "donas"
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        this.select();
+
+                    },
+                    50
+                );
+
+            }
+
+        }
+    );
 
 
     cobroVendedor.addEventListener(
