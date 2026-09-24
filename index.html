@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -579,11 +580,9 @@
         }
 
         @media (max-width: 1000px) {
-
             .paneles-abajo {
                 grid-template-columns: 1fr;
             }
-
         }
 
         @media (max-width: 700px) {
@@ -631,7 +630,6 @@
                 border: 2px solid #2563eb;
                 background: white;
             }
-
         }
 
         .precio-input,
@@ -665,7 +663,6 @@
                 min-height: 50px !important;
                 font-size: 18px !important;
             }
-
         }
 
     </style>
@@ -1288,6 +1285,7 @@
     const KEY_VENDEDORES =
         "vendedores_control_ventas_v1";
 
+
     function obtenerFechaActual() {
 
         const ahora =
@@ -1309,6 +1307,7 @@
         return `${año}-${mes}-${dia}`;
     }
 
+
     function formatoPesos(valor) {
 
         const numero =
@@ -1324,6 +1323,7 @@
         ).format(numero);
     }
 
+
     function numeroArgentino(valor) {
 
         const numero =
@@ -1333,6 +1333,7 @@
             "es-AR"
         ).format(numero);
     }
+
 
     function limpiarNumero(valor) {
 
@@ -1370,6 +1371,7 @@
             : 0;
     }
 
+
     function generarId(prefijo) {
 
         return (
@@ -1383,6 +1385,7 @@
         );
     }
 
+
     function escaparHTML(texto) {
 
         return String(texto ?? "")
@@ -1392,6 +1395,7 @@
             .replace(/"/g,"&quot;")
             .replace(/'/g,"&#039;");
     }
+
 
     const vendedoresIniciales = [
 
@@ -1422,12 +1426,14 @@
 
     ];
 
+
     let vendedores =
         JSON.parse(
             localStorage.getItem(
                 KEY_VENDEDORES
             )
         );
+
 
     if (
         !Array.isArray(vendedores) ||
@@ -1444,6 +1450,7 @@
         guardarVendedores();
     }
 
+
     function guardarVendedores() {
 
         localStorage.setItem(
@@ -1451,6 +1458,7 @@
             JSON.stringify(vendedores)
         );
     }
+
 
     function agregarVendedor() {
 
@@ -1477,6 +1485,7 @@
 
         cargarTodo();
     }
+
 
     function eliminarUltimoVendedor() {
 
@@ -1552,6 +1561,7 @@
 
         cargarTodo();
     }
+
 
     function cambiarNombreVendedor(
         vendedorId,
@@ -1662,6 +1672,11 @@
         cargarTodo();
     }
 
+
+    /*
+     * PRODUCTOS
+     */
+
     const productosIniciales = [
 
         {
@@ -1722,12 +1737,14 @@
 
     ];
 
+
     let productos =
         JSON.parse(
             localStorage.getItem(
                 KEY_PRODUCTOS
             )
         );
+
 
     if (
         !Array.isArray(productos) ||
@@ -1743,6 +1760,11 @@
 
         guardarProductos();
     }
+
+
+    /*
+     * Evitar productos Donas duplicados.
+     */
 
     let donasEncontradas =
         false;
@@ -1783,14 +1805,20 @@
             }
         );
 
+
     /*
-     * DONAS:
-     * Si no existe, se crea automáticamente
-     * con precio $2.000.
+     * ==============================
+     * CORRECCIÓN DE DONAS
+     * ==============================
      *
-     * Si ya existe pero tenía precio $0,
-     * también se corrige automáticamente
-     * a $2.000.
+     * Las Donas SIEMPRE quedan:
+     *
+     * Precio: $2.000
+     * Ganancia: $200
+     *
+     * Esto también corrige un valor
+     * anterior de $2.500 guardado
+     * en localStorage.
      */
 
     if (
@@ -1821,21 +1849,20 @@
                     producto.id === "donas"
             );
 
-        if (
-            donas &&
-            (
-                donas.precio === 0 ||
-                donas.precio === null ||
-                donas.precio === undefined
-            )
-        ) {
+        if (donas) {
 
             donas.precio =
                 2000;
+
+            donas.ganancia =
+                200;
+
         }
     }
 
+
     guardarProductos();
+
 
     function guardarProductos() {
 
@@ -1844,6 +1871,7 @@
             JSON.stringify(productos)
         );
     }
+
 
     function agregarProducto() {
 
@@ -1915,6 +1943,7 @@
 
         cargarTodo();
     }
+
 
     function eliminarUltimoProducto() {
 
@@ -1993,6 +2022,7 @@
         cargarTodo();
     }
 
+
     function cambiarPrecioProducto(
         productoId,
         valor
@@ -2023,6 +2053,7 @@
         actualizarCobroAutomatico();
     }
 
+
     function cambiarGananciaProducto(
         productoId,
         valor
@@ -2051,6 +2082,7 @@
         actualizarCobroAutomatico();
     }
 
+
     const reventaInicial = {
 
         "tortafrita": 1000,
@@ -2065,12 +2097,14 @@
 
     };
 
+
     let preciosReventa =
         JSON.parse(
             localStorage.getItem(
                 KEY_REVENTA
             )
         );
+
 
     if (
         !preciosReventa ||
@@ -2085,6 +2119,7 @@
         guardarPreciosReventa();
     }
 
+
     function guardarPreciosReventa() {
 
         localStorage.setItem(
@@ -2094,6 +2129,7 @@
             )
         );
     }
+
 
     function cambiarPrecioReventa(
         productoId,
@@ -2109,8 +2145,9 @@
 
         guardarPreciosReventa();
     }
-    
-        function obtenerFechaSeleccionada() {
+
+
+    function obtenerFechaSeleccionada() {
 
         const input =
             document.getElementById(
@@ -2286,6 +2323,7 @@
         );
 
         actualizarCobroAutomatico();
+
         renderHistorial();
     }
 
@@ -2714,7 +2752,6 @@
 
 
         if (!producto) {
-
             return;
         }
 
@@ -2793,15 +2830,6 @@
             document.getElementById(
                 "cobroGananciaUnidad"
             );
-
-
-        /*
-         * Los campos de precio y ganancia
-         * se pueden editar directamente.
-         *
-         * Al escribir un valor nuevo,
-         * se guarda en el producto.
-         */
 
 
         precioInput.value =
@@ -3071,61 +3099,52 @@
             );
 
 
+        const idCobro =
+            generarId("cobro");
+
+
         cobros.push({
 
             id:
-                generarId("cobro"),
+                idCobro,
 
             fecha:
-
                 fecha,
 
             vendedorId:
-
                 vendedor.id,
 
             vendedor:
-
                 vendedor.nombre,
 
             productoId:
-
                 producto.id,
 
             producto:
-
                 producto.nombre,
 
             llevada:
-
                 llevada,
 
             sobrante:
-
                 sobrante,
 
             vendida:
-
                 vendida,
 
             precio:
-
                 precio,
 
             gananciaUnidad:
-
                 gananciaUnidad,
 
             dinero:
-
                 dinero,
 
             ganancia:
-
                 ganancia,
 
             hora:
-
                 new Date()
                     .toLocaleTimeString(
                         "es-AR",
@@ -3144,11 +3163,6 @@
         );
 
 
-        /*
-         * También se guarda en el historial
-         * permanente.
-         */
-
         const historial =
             obtenerHistorial();
 
@@ -3156,58 +3170,45 @@
         historial.push({
 
             id:
-                generarId("historial"),
+                idCobro,
 
             fecha:
-
                 fecha,
 
             vendedorId:
-
                 vendedor.id,
 
             vendedor:
-
                 vendedor.nombre,
 
             productoId:
-
                 producto.id,
 
             producto:
-
                 producto.nombre,
 
             llevada:
-
                 llevada,
 
             sobrante:
-
                 sobrante,
 
             vendida:
-
                 vendida,
 
             precio:
-
                 precio,
 
             gananciaUnidad:
-
                 gananciaUnidad,
 
             dinero:
-
                 dinero,
 
             ganancia:
-
                 ganancia,
 
             hora:
-
                 new Date()
                     .toLocaleTimeString(
                         "es-AR",
@@ -3235,6 +3236,7 @@
         renderCobros();
 
         renderHistorial();
+
 
         alert(
             "Cobro agregado correctamente."
@@ -3294,11 +3296,6 @@
         );
 
 
-        /*
-         * También eliminamos el mismo
-         * registro del historial.
-         */
-
         let historial =
             obtenerHistorial();
 
@@ -3308,29 +3305,6 @@
                 registro =>
                     registro.id !==
                     cobroId
-            );
-
-
-        /*
-         * Por seguridad, si el ID del historial
-         * es diferente, se elimina por coincidencia.
-         */
-
-        historial =
-            historial.filter(
-                registro => !(
-                    registro.fecha ===
-                    cobro.fecha &&
-
-                    registro.vendedorId ===
-                    cobro.vendedorId &&
-
-                    registro.productoId ===
-                    cobro.productoId &&
-
-                    registro.hora ===
-                    cobro.hora
-                )
             );
 
 
@@ -3811,10 +3785,8 @@
                 totalVendido +=
                     vendedorVendido;
 
-
                 totalDinero +=
                     vendedorDinero;
-
 
                 totalGanancia +=
                     vendedorGanancia;
@@ -4298,6 +4270,7 @@
 
         actualizarCobroAutomatico();
 
+
         alert(
             "Los datos del día fueron borrados."
         );
@@ -4331,9 +4304,7 @@
 
 
     /*
-     * ============================
      * CALCULADORA
-     * ============================
      */
 
     let calcActual =
@@ -4659,10 +4630,6 @@
     }
 
 
-    /*
-     * Teclado de la calculadora
-     */
-
     document.addEventListener(
         "keydown",
         function(event) {
@@ -4679,14 +4646,6 @@
                 elemento.tagName ===
                     "SELECT";
 
-
-            /*
-             * Si estamos escribiendo
-             * un precio, ganancia,
-             * vendedor, etc.,
-             * no usamos el teclado
-             * como calculadora.
-             */
 
             if (
                 esCampoTexto
@@ -4786,9 +4745,7 @@
 
 
     /*
-     * ============================
      * EVENTOS DEL COBRO
-     * ============================
      */
 
     document.getElementById(
@@ -4826,12 +4783,6 @@
         }
     );
 
-
-    /*
-     * Estos dos campos son editables.
-     * Cuando se modifica el precio
-     * o la ganancia, se guarda automáticamente.
-     */
 
     document.getElementById(
         "cobroPrecio"
@@ -4872,9 +4823,7 @@
 
 
     /*
-     * ============================
      * FECHA
-     * ============================
      */
 
     const fechaInput =
@@ -4902,9 +4851,7 @@
 
 
     /*
-     * ============================
      * CARGAR TODO
-     * ============================
      */
 
     function cargarTodo() {
@@ -4929,16 +4876,14 @@
 
 
     /*
-     * ============================
      * INICIO
-     * ============================
      */
 
     cargarTodo();
-
 
 </script>
 
 </body>
 
 </html>
+```
